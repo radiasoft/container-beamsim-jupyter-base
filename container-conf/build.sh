@@ -70,10 +70,10 @@ build_jupyter() {
 
     pip install --upgrade pip
     pip install --upgrade setuptools
+    pip install jupyter jupyterlab jupyterhub
     # Since the Terminado Settings has not been merged into any release, we are have your
     # own fork with the changes applied to the latest release.
     pip install --upgrade --no-deps git+https://github.com/radiasoft/notebook@terminado_settings#egg=notebook
-    pip install jupyter jupyterlab jupyterhub
 
     jupyter serverextension enable --py jupyterlab --sys-prefix
 }
