@@ -69,7 +69,7 @@ build_jupyter() {
     pyenv activate "$jupyter_venv"
 
     pip install --upgrade pip
-    pip install --upgrade setuptools
+    pip install --upgrade setuptools==32.1.3
     # Since the Terminado Settings has not been merged into any release, we are have your
     # own fork with the changes applied to the latest release.
     pip install --upgrade --no-deps git+https://github.com/radiasoft/notebook@terminado_settings#egg=notebook
