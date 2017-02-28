@@ -4,8 +4,8 @@ beamsim_jupyter_install_jupyter() {
     pyenv update || true
     local pyver=3.5.2
     pyenv install "$pyver"
-    pyenv virtualenv "$pyver" "$beamsim_juypter_jupyter_venv"
-    pyenv activate "$beamsim_juypter_jupyter_venv"
+    pyenv virtualenv "$pyver" "$beamsim_jupyter_jupyter_venv"
+    pyenv activate "$beamsim_jupyter_jupyter_venv"
     pip install --upgrade pip
     pip install --upgrade setuptools==32.1.3 tox
     pip install --upgrade --upgrade-strategy only-if-needed jupyter jupyterlab jupyterhub
