@@ -42,6 +42,7 @@ beamsim_jupyter_rsbeams_style() {
         dst=~/.config/matplotlib/$(basename "$src")
         cp -a "$src" "$dst"
     done
+    rm -rf rsbeams
 }
 
 beamsim_jupyter_synergia_pre3() {
