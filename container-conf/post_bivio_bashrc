@@ -16,7 +16,3 @@ if [[ -n $PS1 ]]; then
     export PS1='\W$ '
     export TERM=xterm
 fi
-
-if [[ -f ~/'{notebook_bashrc}' ]]; then
-    . ~/'{notebook_bashrc}'
-fi

@@ -11,9 +11,9 @@ set -e
 
 curl radia.run | bash -s init-from-git radiasoft/jupyter.radiasoft.org "$JPY_USER/jupyter.radiasoft.org"
 
-pyenv activate '{jupyter_venv}'
+pyenv activate '{beamsim_jupyter_jupyter_venv}'
 
-cd '{notebook_dir}'
+cd '{beamsim_jupyter_notebook_dir}'
 
 if [[ -n $RADIA_RUN_CMD ]]; then
     # Can't quote this
@@ -28,7 +28,7 @@ else
       --base-url="$JPY_BASE_URL" \
       --hub-prefix="$JPY_HUB_PREFIX" \
       --hub-api-url="$JPY_HUB_API_URL" \
-      --notebook-dir='{notebook_dir}'
+      --notebook-dir='{beamsim_jupyter_notebook_dir}'
     RADIA_RUN_CMD=$(type -f jupyterhub-singleuser)
 fi
 
