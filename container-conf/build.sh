@@ -99,7 +99,7 @@ build_as_run_user() {
     . ~/.bashrc
 
     ipython profile create default
-    cat > .ipython/profile_default/ipython_config.py <<'EOF'
+    cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
