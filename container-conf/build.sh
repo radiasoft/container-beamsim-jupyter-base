@@ -89,7 +89,6 @@ build_as_run_user() {
 
     (beamsim_jupyter_install_jupyter)
 
-    # POSIT: notebook_dir in salt-conf/srv/pillar/jupyterhub/base.yml
     mkdir -p ~/.jupyter "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
     build_replace_vars jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
     build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
@@ -99,6 +98,10 @@ build_as_run_user() {
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     . ~/.bashrc
 
+    ipython profile create default
+    cat > .ipython/profile_default/ipython_config.py <<'EOF'
+c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
+EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
     beamsim_jupyter_rsbeams_style
     (beamsim_jupyter_synergia_pre3)
