@@ -31,7 +31,7 @@ beamsim_jupyter_ipy_kernel_env() {
                     qw(SYNERGIA2DIR LD_LIBRARY_PATH PYTHONPATH)));
         }
         s/^\{/{\n "env": {\n@{[_e()]}\n },/
-    ' "$where"/kernel.json
+    ' "${where[-1]}"/kernel.json
 }
 
 beamsim_jupyter_rsbeams_style() {
