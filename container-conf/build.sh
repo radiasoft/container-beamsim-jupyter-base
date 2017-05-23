@@ -45,17 +45,6 @@ beamsim_jupyter_rsbeams_style() {
     rm -rf rsbeams
 }
 
-beamsim_jupyter_synergia_pre3() {
-    local venv=synergia-pre3
-    pyenv virtualenv 2.7.10 "$venv"
-    pyenv activate "$venv"
-    # pykern brings in a lot of requirements to simplify build times
-    pip install pykern
-    build_curl radia.run | codes_synergia_branch=devel-pre3 bash -s master code synergia rsbeams
-    beamsim_jupyter_ipy_kernel_env 'Python 2 synergia-pre3' "$venv"
-    # Test with: ipython notebook --no-browser --ip='*'
-}
-
 beamsim_jupyter_vars() {
     build_image_base=radiasoft/beamsim
     beamsim_jupyter_boot_dir=$build_run_user_home/.radia-run
@@ -104,7 +93,6 @@ c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
     beamsim_jupyter_rsbeams_style
-    (beamsim_jupyter_synergia_pre3)
 }
 
 beamsim_jupyter_vars
