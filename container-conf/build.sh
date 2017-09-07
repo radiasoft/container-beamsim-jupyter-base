@@ -88,6 +88,7 @@ build_as_run_user() {
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     . ~/.bashrc
 
+    pip install --upgrade ipywidgets
     ipython profile create default
     cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
