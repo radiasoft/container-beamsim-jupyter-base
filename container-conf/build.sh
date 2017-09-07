@@ -13,6 +13,7 @@ beamsim_jupyter_install_jupyter() {
     # own fork with the changes applied to the latest release.
     pip install --upgrade --no-deps git+https://github.com/radiasoft/notebook@terminado_settings#egg=notebook
     jupyter serverextension enable --py jupyterlab --sys-prefix
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
 beamsim_jupyter_ipy_kernel_env() {
