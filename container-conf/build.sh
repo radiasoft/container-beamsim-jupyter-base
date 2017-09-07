@@ -93,6 +93,7 @@ build_as_run_user() {
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
