@@ -8,12 +8,9 @@ beamsim_jupyter_install_jupyter() {
     pyenv activate "$beamsim_jupyter_jupyter_venv"
     pip install --upgrade pip
     pip install --upgrade setuptools==32.1.3 tox
-    pip install --upgrade --upgrade-strategy only-if-needed jupyter jupyterlab jupyterhub
-    # Since the Terminado Settings has not been merged into any release, we are have your
-    # own fork with the changes applied to the latest release.
-    pip install --upgrade --no-deps git+https://github.com/radiasoft/notebook@terminado_settings#egg=notebook
+    pip install --upgrade jupyter jupyterlab jupyterhub
     jupyter serverextension enable --py jupyterlab --sys-prefix
-    #jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
 beamsim_jupyter_ipy_kernel_env() {
@@ -33,6 +30,14 @@ beamsim_jupyter_ipy_kernel_env() {
         }
         s/^\{/{\n "env": {\n@{[_e()]}\n },/
     ' "${where[-1]}"/kernel.json
+}
+
+beamsim_jupyter_reinstall() {
+    # Need to uninstall jupyter/ipython, and reinstall to get the latest versions for
+    # widgetsnbextension
+    pip uninstall -y ipython_genutils ipyparallel ipykernel ipywidgets ipython jupyter_client jupyter jupyter_core
+    pip install 'jupyter[all]'
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
 beamsim_jupyter_rsbeams_style() {
@@ -68,6 +73,8 @@ build_as_root() {
 }
 
 build_as_run_user() {
+    beamsim_jupyter_reinstall
+
     cd "$build_guest_conf"
     beamsim_jupyter_vars
     local notebook_dir_base=jupyter
@@ -88,13 +95,11 @@ build_as_run_user() {
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     . ~/.bashrc
 
-    #pip install --upgrade ipywidgets
     ipython profile create default
     cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
-    #jupyter nbextension enable --py --sys-prefix widgetsnbextension
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
