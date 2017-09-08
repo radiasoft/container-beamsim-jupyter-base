@@ -13,7 +13,7 @@ beamsim_jupyter_install_jupyter() {
     # own fork with the changes applied to the latest release.
     pip install --upgrade --no-deps git+https://github.com/radiasoft/notebook@terminado_settings#egg=notebook
     jupyter serverextension enable --py jupyterlab --sys-prefix
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    #jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
 beamsim_jupyter_ipy_kernel_env() {
@@ -88,13 +88,13 @@ build_as_run_user() {
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     . ~/.bashrc
 
-    pip install --upgrade ipywidgets
+    #pip install --upgrade ipywidgets
     ipython profile create default
     cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    #jupyter nbextension enable --py --sys-prefix widgetsnbextension
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
