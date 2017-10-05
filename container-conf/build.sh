@@ -35,7 +35,11 @@ beamsim_jupyter_ipy_kernel_env() {
 beamsim_jupyter_reinstall() {
     # Need to uninstall jupyter/ipython, and reinstall to get the latest versions for
     # widgetsnbextension
-    pip uninstall -y ipython_genutils ipyparallel ipykernel ipywidgets ipython jupyter_client jupyter_core
+    local f
+    for f in ipython_genutils ipyparallel ipykernel ipywidgets ipython jupyter_client jupyter_core; do
+        pip uninstall -y "$f" >& /dev/null || true
+    done
+
     pip install 'jupyter[all]'
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
