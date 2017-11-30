@@ -76,6 +76,7 @@ beamsim_jupyter_vars() {
     beamsim_jupyter_boot_dir=$build_run_user_home/.radia-run
     beamsim_jupyter_tini_file=$beamsim_jupyter_boot_dir/tini
     beamsim_jupyter_radia_run_boot=$beamsim_jupyter_boot_dir/start
+    build_is_public=1
     build_docker_cmd='["'"$beamsim_jupyter_tini_file"'", "--", "'"$beamsim_jupyter_radia_run_boot"'"]'
     build_dockerfile_aux="USER $build_run_user"
 }
