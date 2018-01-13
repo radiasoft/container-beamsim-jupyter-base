@@ -7,22 +7,22 @@ beamsim_jupyter_install_jupyter() {
     pyenv virtualenv "$pyver" "$beamsim_jupyter_jupyter_venv"
     pyenv activate "$beamsim_jupyter_jupyter_venv"
     pip install --upgrade pip
-    pip install --upgrade setuptools==32.1.3 tox
+    pip install --upgrade setuptools==38.4.0 tox
     local known_working=(
         jupyter==1.0.0
         jupyter-client==5.1.0
         jupyter-console==5.2.0
-        jupyter-core==4.3.0
-        jupyterhub==0.7.2
-        jupyterlab==0.27.0
-        jupyterlab-launcher==0.4.2
-        ipykernel==4.6.1
-        ipython==6.1.0
+        jupyter-core==4.4.0
+        jupyterhub==0.8.1
+        jupyterlab==0.31.0
+        jupyterlab-launcher==0.10.2
+        ipykernel==4.7.0
+        ipython==6.2.1
         ipython-genutils==0.2.0
-        ipywidgets==7.0.0
+        ipywidgets==7.1.0
         nbconvert==5.3.1
         nbformat==4.4.0
-        notebook==5.0.0
+        notebook==5.3.0rc1
     )
     pip install --upgrade "${known_working[@]}"
     jupyter serverextension enable --py jupyterlab --sys-prefix

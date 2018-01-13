@@ -18,7 +18,18 @@ cd '{beamsim_jupyter_notebook_dir}'
 if [[ -n $RADIA_RUN_CMD ]]; then
     # Can't quote this
     exec $RADIA_RUN_CMD
+elif [[ $JUPYTERHUB_API_URL ]]; then
+    # modern jupyterhub
+    # https://github.com/jupyter/docker-stacks/tree/master/base-notebook for
+    # why this is started this way.
+    # POSIT: 8888 in various jupyterhub repos
+    exec jupyterhub-singleuser \
+      --port="${RADIA_RUN_PORT:-8888}" \
+      --ip=0.0.0.0 \
+      --notebook-dir='{beamsim_jupyter_notebook_dir}'
+    RADIA_RUN_CMD=$(type -f jupyterhub-singleuser)
 else
+    # "legacy" jupyterhub pre-0.8
     # POSIT: 8888 in various jupyterhub repos
     exec jupyterhub-singleuser \
       --port="${RADIA_RUN_PORT:-8888}" \
