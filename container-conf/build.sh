@@ -67,7 +67,7 @@ beamsim_jupyter_rsbeams_style() {
     local dst
     local src
     git clone https://github.com/radiasoft/rsbeams
-    for src in rsbeams/rsbeams/matplotlib/stylelib/*; do
+    for src in rsbeams/rsbeams/rsplot/stylelib/*; do
         dst=~/.config/matplotlib/$(basename "$src")
         cp -a "$src" "$dst"
     done
