@@ -84,13 +84,13 @@ beamsim_jupyter_vars() {
 build_as_root() {
     # Add RPMFusion repo:
     # http://rpmfusion.org/Configuration
-    build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-21.noarch.rpm
-    build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-21.noarch.rpm
+    build_yum install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-27.noarch.rpm
+    build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-27.noarch.rpm
     # ffmpeg for matplotlib animations
     # yum-utils for yum repo management
-    build_yum install ffmpeg yum-utils texlive-scheme-medium
+    build_yum install ffmpeg texlive-scheme-medium
     # ffmpeg was already installed from rpmfusion, disable it for future packages
-    yum-config-manager --disable 'rpmfusion*' > /dev/null
+    dnf config-manager --set-disabled 'rpmfusion*'
 }
 
 build_as_run_user() {
@@ -111,7 +111,8 @@ build_as_run_user() {
     build_replace_vars jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
     build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
     chmod +x "$beamsim_jupyter_radia_run_boot"
-    build_curl https://github.com/krallin/tini/releases/download/v0.9.0/tini > "$beamsim_jupyter_tini_file"
+    # Replace with --init??
+    build_curl https://github.com/krallin/tini/releases/download/v0.16.1/tini > "$beamsim_jupyter_tini_file"
     chmod +x "$beamsim_jupyter_tini_file"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     . ~/.bashrc
