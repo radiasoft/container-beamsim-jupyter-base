@@ -3,6 +3,9 @@
 beamsim_jupyter_install_jupyter() {
     pyenv update || true
     local pyver=3.5.2
+    # https://github.com/pyenv/pyenv/issues/950#issuecomment-334316289
+    # need older openssl version (1.0.x)
+    build_yum remove openssl-devel; build_yum install compat-openssl10-devel
     pyenv install "$pyver"
     pyenv virtualenv "$pyver" "$beamsim_jupyter_jupyter_venv"
     pyenv activate "$beamsim_jupyter_jupyter_venv"
