@@ -1,5 +1,10 @@
 #!/bin/bash
 
+beamsim_jupyter_extra_packages() {
+    # https://github.com/radiasoft/devops/issues/135
+    pip install sklearn keras tensorflow
+}
+
 beamsim_jupyter_install_jupyter() {
     pyenv update || true
     local pyver=3.5.2
@@ -125,6 +130,7 @@ build_as_run_user() {
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
     beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
+    beamsim_jupyter_extra_packages
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
