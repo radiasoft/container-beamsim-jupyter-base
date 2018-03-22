@@ -17,20 +17,24 @@ beamsim_jupyter_install_jupyter() {
     pip install --upgrade pip
     pip install --upgrade setuptools==38.4.0 tox
     local known_working=(
-        jupyter==1.0.0
+        SQLAlchemy==1.2.4
+        alembic==0.9.8
+        bleach==2.1.2
+        ipykernel==4.7.0
+        ipython-genutils==0.2.0
+        ipython==6.2.1
+        ipywidgets==7.1.0
         jupyter-client==5.1.0
         jupyter-console==5.2.0
         jupyter-core==4.4.0
+        jupyter==1.0.0
         jupyterhub==0.8.1
-        jupyterlab==0.31.0
         jupyterlab-launcher==0.10.2
-        ipykernel==4.7.0
-        ipython==6.2.1
-        ipython-genutils==0.2.0
-        ipywidgets==7.1.0
+        jupyterlab==0.31.0
         nbconvert==5.3.1
         nbformat==4.4.0
         notebook==5.3.0rc1
+        tornado==4.5.3
     )
     pip install --upgrade "${known_working[@]}"
     jupyter serverextension enable --py jupyterlab --sys-prefix
