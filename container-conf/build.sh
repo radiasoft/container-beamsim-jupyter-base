@@ -1,4 +1,29 @@
 #!/bin/bash
+beamsim_jupyter_versions=(
+    SQLAlchemy==1.2.4
+    alembic==0.9.8
+    bleach==2.1.2
+    ipykernel==4.7.0
+    ipython-genutils==0.2.0
+    ipython==6.2.1
+    ipywidgets==7.1.0
+    jupyter-client==5.1.0
+    jupyter-console==5.2.0
+    jupyter-core==4.4.0
+    jupyter==1.0.0
+    nbconvert==5.3.1
+    nbformat==4.4.0
+    notebook==5.3.0rc1
+    tornado==4.5.3
+    trailets==4.3.2
+)
+
+beamsim_jupyter_jupyterhub_versions=(
+    "${beamsim_jupyter_versions[@]}"
+    jupyterhub==0.8.1
+    jupyterlab-launcher==0.10.2
+    jupyterlab==0.31.0
+)
 
 beamsim_jupyter_extra_packages() {
     # https://github.com/radiasoft/devops/issues/135
@@ -16,27 +41,7 @@ beamsim_jupyter_install_jupyter() {
     pyenv activate "$beamsim_jupyter_jupyter_venv"
     pip install --upgrade pip
     pip install --upgrade setuptools==38.4.0 tox
-    local known_working=(
-        SQLAlchemy==1.2.4
-        alembic==0.9.8
-        bleach==2.1.2
-        ipykernel==4.7.0
-        ipython-genutils==0.2.0
-        ipython==6.2.1
-        ipywidgets==7.1.0
-        jupyter-client==5.1.0
-        jupyter-console==5.2.0
-        jupyter-core==4.4.0
-        jupyter==1.0.0
-        jupyterhub==0.8.1
-        jupyterlab-launcher==0.10.2
-        jupyterlab==0.31.0
-        nbconvert==5.3.1
-        nbformat==4.4.0
-        notebook==5.3.0rc1
-        tornado==4.5.3
-    )
-    pip install --upgrade "${known_working[@]}"
+    pip install "${beamsim_jupyter_jupyterhub_versions[@]}"
     jupyter serverextension enable --py jupyterlab --sys-prefix
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
@@ -68,7 +73,7 @@ beamsim_jupyter_reinstall() {
         pip uninstall -y "$f" >& /dev/null || true
     done
 
-    pip install 'jupyter[all]'
+    pip install "${beamsim_jupyter_versions[@]}"
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
