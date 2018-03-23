@@ -14,7 +14,7 @@ beamsim_jupyter_py2_versions=(
     nbformat==4.4.0
     notebook==5.3.0rc1
     tornado==4.5.3
-    trailets==4.3.2
+    traitlets==4.3.2
 )
 
 beamsim_jupyter_jupyter_versions=(
