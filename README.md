@@ -1,5 +1,4 @@
-### Jupyter/IPython Beam Simulation Container (radiasoft/beamsim-jupyter) [![Build Status](https://travis-ci.org/radiasoft/container-beamsim-jupyter.svg?branch=master)](https://travis-ci.org/radiasoft/container-beamsim-jupyter)
-
+### Jupyter/IPython Beam Simulation Container (radiasoft/beamsim-jupyter)
 See [radiasoft/container-beamsim](https://github.com/radiasoft/container-beamsim) for
 description of codes.
 
