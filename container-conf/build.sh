@@ -31,8 +31,13 @@ beamsim_jupyter_py2_versions+=(
 )
 
 beamsim_jupyter_extra_packages() {
-    # https://github.com/radiasoft/devops/issues/135
-    pip install sklearn keras tensorflow
+    local x=(
+        # https://github.com/radiasoft/devops/issues/135
+        sklearn keras tensorflow
+        # https://github.com/radiasoft/devops/issues/146
+        pillow
+    )
+    pip install "${x[@]}"
 }
 
 beamsim_jupyter_install_jupyter() {
