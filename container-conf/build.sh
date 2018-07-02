@@ -32,6 +32,8 @@ beamsim_jupyter_py2_versions+=(
 
 beamsim_jupyter_extra_packages() {
     local x=(
+        # https://github.com/radiasoft/devops/issues/152
+        fbpic
         # https://github.com/radiasoft/devops/issues/135
         sklearn keras tensorflow
         # https://github.com/radiasoft/devops/issues/146
