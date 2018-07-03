@@ -31,7 +31,12 @@ beamsim_jupyter_py2_versions+=(
 )
 
 beamsim_jupyter_extra_packages() {
+    # https://github.com/radiasoft/devops/issues/153
+    build_yum install fftw3-devel
     local x=(
+        # https://github.com/radiasoft/devops/issues/153
+        # needs to be before fbpic
+        pyfftw
         # https://github.com/radiasoft/devops/issues/152
         fbpic
         # https://github.com/radiasoft/devops/issues/135
