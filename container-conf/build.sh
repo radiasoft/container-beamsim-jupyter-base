@@ -97,9 +97,11 @@ beamsim_jupyter_reinstall() {
 beamsim_jupyter_rsbeams_style() {
     local dst
     local src
+    local d=~/.config/matplotlib
+    mkdir -p "$d"
     git clone https://github.com/radiasoft/rsbeams
     for src in rsbeams/rsbeams/rsplot/stylelib/*; do
-        dst=~/.config/matplotlib/$(basename "$src")
+        dst=$d/$(basename "$src")
         cp -a "$src" "$dst"
     done
     rm -rf rsbeams
