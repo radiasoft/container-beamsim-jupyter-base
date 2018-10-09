@@ -34,6 +34,9 @@ beamsim_jupyter_extra_packages() {
     # https://github.com/radiasoft/devops/issues/153
     build_yum install fftw3-devel
     # https://github.com/numba/numba/issues/3341
+    # need first b/c these wheels work, but --no-binary :all: turns off binary:
+    # lvm-config failed executing, please point LLVM_CONFIG
+    pip install funcsigs llvmlite
     pip install numba --no-binary :all:
     local x=(
         # https://github.com/radiasoft/devops/issues/153
