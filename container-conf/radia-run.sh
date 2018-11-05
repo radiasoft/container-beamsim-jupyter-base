@@ -15,7 +15,7 @@ pyenv activate '{beamsim_jupyter_jupyter_venv}'
 
 cd '{beamsim_jupyter_notebook_dir}'
 
-if [[ -n $RADIA_RUN_CMD ]]; then
+if [[ $RADIA_RUN_CMD ]]; then
     # Can't quote this
     exec $RADIA_RUN_CMD
 elif [[ $JUPYTERHUB_API_URL ]]; then

@@ -1,6 +1,9 @@
 #!/bin/bash
 
-beamsim_jupyter_py2_versions=(
+beamsim_jupyter_py3_version=3.6.6
+
+# Jupyter no longer supports py2
+beamsim_jupyter_py2_pip_versions=(
     SQLAlchemy==1.2.4
     alembic==0.9.8
     bleach==2.1.2
@@ -15,24 +18,32 @@ beamsim_jupyter_py2_versions=(
     notebook==5.3.0rc1
     tornado==4.5.3
     traitlets==4.3.2
-)
-
-beamsim_jupyter_jupyter_versions=(
-    "${beamsim_jupyter_py2_versions[@]}"
-    ipython==6.2.1
-    ipywidgets==7.1.0
-    jupyterhub==0.8.1
-    jupyterlab-launcher==0.10.2
-    jupyterlab==0.31.0
-)
-
-beamsim_jupyter_py2_versions+=(
     ipython==5.5.0
 )
 
+beamsim_jupyter_py3_pip_versions=(
+    SQLAlchemy
+    alembic
+    bleach
+    ipykernel
+    ipython-genutils
+    jupyter-client
+    jupyter-console
+    jupyter-core
+    jupyter
+    nbconvert
+    nbformat
+    notebook
+    tornado
+    traitlets
+    ipython
+    ipywidgets
+    jupyterhub
+    jupyterlab-launcher
+    jupyterlab
+)
+
 beamsim_jupyter_extra_packages() {
-    # https://github.com/radiasoft/devops/issues/153
-    build_yum install fftw3-devel
     # https://github.com/numba/numba/issues/3341
     # need first b/c these wheels work, but --no-binary :all: turns off binary:
     # lvm-config failed executing, please point LLVM_CONFIG
@@ -54,18 +65,12 @@ beamsim_jupyter_extra_packages() {
 
 beamsim_jupyter_install_jupyter() {
     pyenv update || true
-    local pyver=3.5.2
-    # https://github.com/pyenv/pyenv/issues/950#issuecomment-334316289
-    # need older openssl version (1.0.x)
-    build_yum remove openssl-devel; build_yum install compat-openssl10-devel
-    pyenv install "$pyver"
-    pyenv virtualenv "$pyver" "$beamsim_jupyter_jupyter_venv"
-    pyenv activate "$beamsim_jupyter_jupyter_venv"
-    pip install --upgrade pip
-    pip install --upgrade setuptools==38.4.0 tox
-    pip install "${beamsim_jupyter_jupyter_versions[@]}"
-    jupyter serverextension enable --py jupyterlab --sys-prefix
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+#    # https://github.com/pyenv/pyenv/issues/950#issuecomment-334316289
+#    # need older openssl version (1.0.x)
+#    build_yum remove openssl-devel
+#    build_yum install compat-openssl10-devel
+    pyenv install "$beamsim_jupyter_py3_version"
+    beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
 }
 
 beamsim_jupyter_ipy_kernel_env() {
@@ -74,17 +79,36 @@ beamsim_jupyter_ipy_kernel_env() {
     local display_name=$1
     local name=$2
     local where=( $(python -m ipykernel install --display-name "$display_name" --name "$name" --user) )
-    . ~/.pyenv/pyenv.d/exec/*synergia*.bash
+    local x=$(ls ~/.pyenv/pyenv.d/exec/*synergia*.bash 2>/dev/null || true)
+    if [[ $x ]]; then
+        . "$x"
+    fi
     perl -pi -e '
         sub _e {
             return join(
                 qq{,\n},
                 map(
-                    qq{  "$_": "$ENV{$_}"},
-                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PYTHONPATH)));
+                    $ENV{$_} ? qq{  "$_": "$ENV{$_}"} : (),
+                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PYTHONPATH),
+                ),
+            );
         }
         s/^\{/{\n "env": {\n@{[_e()]}\n },/
     ' "${where[-1]}"/kernel.json
+}
+
+beamsim_jupyter_install_py3_venv() {
+    local venv=$1
+    pyenv virtualenv "$beamsim_jupyter_py3_version" "$venv"
+    pyenv activate "$venv"
+    pip install --upgrade pip
+    pip install --upgrade setuptools tox
+    pip install "${beamsim_jupyter_py3_pip_versions[@]}"
+    jupyter serverextension enable --py jupyterlab --sys-prefix
+    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    # https://github.com/jupyterlab/jupyterlab/issues/5420
+    # And then:
+    # jupyter labextension install @jupyterlab/hub-extension
 }
 
 beamsim_jupyter_reinstall() {
@@ -95,7 +119,7 @@ beamsim_jupyter_reinstall() {
         pip uninstall -y "$f" >& /dev/null || true
     done
 
-    pip install "${beamsim_jupyter_py2_versions[@]}"
+    pip install "${beamsim_jupyter_py2_pip_versions[@]}"
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
@@ -156,14 +180,28 @@ build_as_run_user() {
     build_curl https://github.com/krallin/tini/releases/download/v0.16.1/tini > "$beamsim_jupyter_tini_file"
     chmod +x "$beamsim_jupyter_tini_file"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
+    set +euo pipefail
     . ~/.bashrc
+    set -euo pipefail
 
     ipython profile create default
     cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
 EOF
-    beamsim_jupyter_ipy_kernel_env 'Python 2' "$(pyenv global)"
-    beamsim_jupyter_extra_packages
+    local i
+    for i in 2 3; do
+        (
+            local v=py$i
+            if [[ $i == 3 ]]; then
+                beamsim_jupyter_install_py3_venv "$v"
+            else
+                pyenv activate "$v"
+                beamsim_jupyter_extra_packages
+            fi
+            beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
+        )
+    done
+
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc

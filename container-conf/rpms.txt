@@ -10,3 +10,7 @@ bind-utils
 # Needed for debugging
 iproute
 strace
+# https://bugs.python.org/issue31652
+libffi-devel
+# https://github.com/radiasoft/devops/issues/153
+fftw3-devel
