@@ -64,12 +64,10 @@ beamsim_jupyter_extra_packages() {
 }
 
 beamsim_jupyter_install_jupyter() {
+    set +euo pipefail
     pyenv update || true
-#    # https://github.com/pyenv/pyenv/issues/950#issuecomment-334316289
-#    # need older openssl version (1.0.x)
-#    build_yum remove openssl-devel
-#    build_yum install compat-openssl10-devel
     pyenv install "$beamsim_jupyter_py3_version"
+    set -euo pipefail
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
 }
 
@@ -99,16 +97,18 @@ beamsim_jupyter_ipy_kernel_env() {
 
 beamsim_jupyter_install_py3_venv() {
     local venv=$1
+    set +euo pipefail
     pyenv virtualenv "$beamsim_jupyter_py3_version" "$venv"
     pyenv activate "$venv"
+    set -euo pipefail
     pip install --upgrade pip
     pip install --upgrade setuptools tox
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
     jupyter serverextension enable --py jupyterlab --sys-prefix
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
-    # https://github.com/jupyterlab/jupyterlab/issues/5420
-    # And then:
-    # jupyter labextension install @jupyterlab/hub-extension
+    # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
+    # will produce a collision (but warning) on vega-lite
+    jupyter labextension install @jupyterlab/hub-extension
 }
 
 beamsim_jupyter_reinstall() {
@@ -195,7 +195,9 @@ EOF
             if [[ $i == 3 ]]; then
                 beamsim_jupyter_install_py3_venv "$v"
             else
+                set +euo pipefail
                 pyenv activate "$v"
+                set -euo pipefail
                 beamsim_jupyter_extra_packages
             fi
             beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
