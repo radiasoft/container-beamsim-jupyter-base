@@ -1,7 +1,5 @@
 #!/bin/bash
 
-beamsim_jupyter_py3_version=3.6.6
-
 # Jupyter no longer supports py2
 beamsim_jupyter_py2_pip_versions=(
     SQLAlchemy==1.2.4
@@ -64,10 +62,9 @@ beamsim_jupyter_extra_packages() {
 }
 
 beamsim_jupyter_install_jupyter() {
-    set +euo pipefail
-    pyenv update || true
-    pyenv install "$beamsim_jupyter_py3_version"
-    set -euo pipefail
+    install_not_strict_cmd pyenv activate py3
+    local v=( $(python3 --version) )
+    install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
 }
 
@@ -97,12 +94,7 @@ beamsim_jupyter_ipy_kernel_env() {
 
 beamsim_jupyter_install_py3_venv() {
     local venv=$1
-    set +euo pipefail
-    pyenv virtualenv "$beamsim_jupyter_py3_version" "$venv"
-    pyenv activate "$venv"
-    set -euo pipefail
-    pip install --upgrade pip
-    pip install --upgrade setuptools tox
+    install_not_strict_cmd pyenv activate "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
     jupyter serverextension enable --py jupyterlab --sys-prefix
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
@@ -159,8 +151,10 @@ build_as_root() {
 }
 
 build_as_run_user() {
+    # Make sure readable-executable by world in case someone wants to
+    # run the container as non-vagrant user.
+    umask 022
     beamsim_jupyter_reinstall
-
     cd "$build_guest_conf"
     beamsim_jupyter_vars
     local notebook_dir_base=jupyter
@@ -169,21 +163,15 @@ build_as_run_user() {
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
     export beamsim_jupyter_notebook_template_dir=$beamsim_jupyter_boot_dir/$notebook_dir_base
     export beamsim_jupyter_jupyter_venv=jupyter
-
     (beamsim_jupyter_install_jupyter)
-
     mkdir -p ~/.jupyter "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
     build_replace_vars jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
     build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
-    chmod +x "$beamsim_jupyter_radia_run_boot"
-    # Replace with --init??
+    chmod a+rx "$beamsim_jupyter_radia_run_boot"
     build_curl https://github.com/krallin/tini/releases/download/v0.16.1/tini > "$beamsim_jupyter_tini_file"
-    chmod +x "$beamsim_jupyter_tini_file"
+    chmod a+rx "$beamsim_jupyter_tini_file"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
-    set +euo pipefail
-    . ~/.bashrc
-    set -euo pipefail
-
+    install_source_bashrc
     ipython profile create default
     cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
@@ -194,19 +182,18 @@ EOF
             local v=py$i
             if [[ $i == 3 ]]; then
                 beamsim_jupyter_install_py3_venv "$v"
-            else
-                set +euo pipefail
-                pyenv activate "$v"
-                set -euo pipefail
                 beamsim_jupyter_extra_packages
+            else
+                install_not_strict_cmd pyenv activate "$v"
             fi
             beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
         )
     done
-
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
+    # default py3 over py2
+    install_not_strict_cmd pyenv py3:py2
 }
 
 beamsim_jupyter_vars
