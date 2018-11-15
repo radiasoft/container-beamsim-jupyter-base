@@ -101,6 +101,10 @@ beamsim_jupyter_install_py3_venv() {
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
     # will produce a collision (but warning) on vega-lite
     jupyter labextension install @jupyterlab/hub-extension
+    # https://github.com/matplotlib/jupyter-matplotlib#installation
+    pip install ipympl
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager
+    jupyter labextension install jupyter-matplotlib
 }
 
 beamsim_jupyter_reinstall() {
