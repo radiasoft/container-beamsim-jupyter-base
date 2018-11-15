@@ -193,7 +193,7 @@ EOF
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
     # default py3 over py2
-    install_not_strict_cmd pyenv py3:py2
+    install_not_strict_cmd pyenv global py3:py2
 }
 
 beamsim_jupyter_vars
