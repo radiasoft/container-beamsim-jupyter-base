@@ -139,6 +139,24 @@ beamsim_jupyter_vars() {
 }
 
 build_as_root() {
+    local r=(
+        emacs-nox
+        hostname
+        # Needed to install jupyter/notebook from git
+        npm
+        # Needed for MPI nodes
+        openssh-server
+        # For cluster start
+        bind-utils
+        # Needed for debugging
+        iproute
+        strace
+        # https://bugs.python.org/issue31652
+        libffi-devel
+        # https://github.com/radiasoft/devops/issues/153
+        fftw3-devel
+    )
+    build_yum install "${r[@]}"
     # Add RPMFusion repo:
     # http://rpmfusion.org/Configuration
     build_yum install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-27.noarch.rpm
@@ -154,6 +172,10 @@ build_as_run_user() {
     # Make sure readable-executable by world in case someone wants to
     # run the container as non-vagrant user.
     umask 022
+    install_not_strict_cmd pyenv activate py2
+    if [[ $(pyenv version-name) != py2 ]]; then
+        build_err "ASSERTION FAULT: environment is not right, missing pyenv: $(env)"
+    fi
     beamsim_jupyter_reinstall
     cd "$build_guest_conf"
     beamsim_jupyter_vars
@@ -172,6 +194,7 @@ build_as_run_user() {
     chmod a+rx "$beamsim_jupyter_tini_file"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     install_source_bashrc
+    umask 022
     ipython profile create default
     cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
 c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
@@ -192,7 +215,6 @@ EOF
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
-    # default py3 over py2
     install_not_strict_cmd pyenv global py3:py2
 }
 
