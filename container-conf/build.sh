@@ -182,10 +182,10 @@ EOF
             local v=py$i
             if [[ $i == 3 ]]; then
                 beamsim_jupyter_install_py3_venv "$v"
-                beamsim_jupyter_extra_packages
             else
                 install_not_strict_cmd pyenv activate "$v"
             fi
+            beamsim_jupyter_extra_packages
             beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
         )
     done
