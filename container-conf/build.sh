@@ -57,6 +57,8 @@ beamsim_jupyter_extra_packages() {
         sklearn keras tensorflow
         # https://github.com/radiasoft/devops/issues/146
         pillow
+        # https://github.com/radiasoft/ops/issues/325
+        yt
     )
     pip install "${x[@]}"
 }
