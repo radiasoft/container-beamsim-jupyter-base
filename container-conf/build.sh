@@ -46,13 +46,18 @@ beamsim_jupyter_extra_packages() {
     # need first b/c these wheels work, but --no-binary :all: turns off binary:
     # lvm-config failed executing, please point LLVM_CONFIG
     pip install funcsigs llvmlite
-    pip install numba --no-binary :all:
+    # https://github.com/radiasoft/jupyter.radiasoft.org/issues/25
+    pip install numba==0.41.0 --no-binary :all:
     local x=(
         # https://github.com/radiasoft/devops/issues/153
         # needs to be before fbpic
         pyfftw
         # https://github.com/radiasoft/devops/issues/152
         fbpic
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/10
+        GPy
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
+        safeopt
         # https://github.com/radiasoft/devops/issues/135
         sklearn keras tensorflow
         # https://github.com/radiasoft/devops/issues/146
