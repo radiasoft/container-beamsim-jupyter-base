@@ -17,6 +17,9 @@ beamsim_jupyter_py2_pip_versions=(
     tornado==4.5.3
     traitlets==4.3.2
     ipython==5.5.0
+
+    # Doesn't appear to be version locked
+    ipympl
 )
 
 beamsim_jupyter_py3_pip_versions=(
@@ -110,6 +113,8 @@ beamsim_jupyter_install_py3_venv() {
     jupyter labextension install @jupyterlab/hub-extension
     # https://github.com/matplotlib/jupyter-matplotlib#installation
     pip install ipympl
+    # https://github.com/radiasoft/container-beamsim-jupyter/issues/12
+    pip install openPMD-viewer
     jupyter labextension install @jupyter-widgets/jupyterlab-manager
     jupyter labextension install jupyter-matplotlib
 }
