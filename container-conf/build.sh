@@ -62,11 +62,11 @@ beamsim_jupyter_extra_packages() {
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
         safeopt
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
-        pip install seaborn
+        seaborn
         # https://github.com/radiasoft/devops/issues/135
         sklearn keras tensorflow
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
-        pip install pandas
+        pandas
         # https://github.com/radiasoft/devops/issues/146
         pillow
         # https://github.com/radiasoft/ops/issues/325
