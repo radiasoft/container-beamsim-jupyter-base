@@ -186,6 +186,8 @@ build_as_root() {
     build_yum install ffmpeg texlive-scheme-medium
     # ffmpeg was already installed from rpmfusion, disable it for future packages
     dnf config-manager --set-disabled 'rpmfusion*'
+    # https://github.com/radiasoft/ops/issues/329
+    build_yum install rscode-pymesh
 }
 
 build_as_run_user() {
