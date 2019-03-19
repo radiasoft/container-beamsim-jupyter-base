@@ -41,7 +41,8 @@ beamsim_jupyter_py3_pip_versions=(
     ipywidgets
     jupyterhub
     jupyterlab-launcher
-    jupyterlab
+# Use chrome-455987-fix
+#    jupyterlab
 )
 
 beamsim_jupyter_extra_packages() {
@@ -109,6 +110,7 @@ beamsim_jupyter_install_py3_venv() {
     local venv=$1
     install_not_strict_cmd pyenv activate "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
+    pip install git+git://github.com/robnagler/jupyterlab@chrome-455987-fix
     jupyter serverextension enable --py jupyterlab --sys-prefix
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
