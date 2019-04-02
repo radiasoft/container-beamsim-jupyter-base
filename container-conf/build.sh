@@ -69,7 +69,6 @@ beamsim_jupyter_extra_packages() {
         pandas
         # https://github.com/radiasoft/devops/issues/146
         pillow
-        # https://github.com/radiasoft/ops/issues/325
         yt
     )
     pip install "${x[@]}"
@@ -186,6 +185,7 @@ build_as_root() {
     build_yum install ffmpeg texlive-scheme-medium
     # ffmpeg was already installed from rpmfusion, disable it for future packages
     dnf config-manager --set-disabled 'rpmfusion*'
+    build_yum install rscode-pymesh rscode-epics
 }
 
 build_as_run_user() {
