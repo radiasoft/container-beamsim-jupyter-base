@@ -14,7 +14,8 @@ export LANGUAGE=en_US.UTF-8
 unset PROMPT_COMMAND
 if [[ ${PS1:-} ]]; then
     export PS1='\W$ '
-    export TERM=xterm
+    # WORKAROUND: https://github.com/radiasoft/jupyter.radiasoft.org/issues/15
+    export TERM=ansi
 fi
 
 # Workaround $PYENV_VERSION being set in
@@ -25,4 +26,10 @@ if [[ ( ${JPY_USER:-} || ${JUPYTERHUB_USER:-} ) && ${PYENV_VERSION:-} && -z ${RS
     export RS_TERMINADO_INIT=1
     pyenv deactivate >&/dev/null || true
     unset PYENV_VERSION PYENV_VIRTUAL_ENV VIRTUAL_ENV
+fi
+
+# Allow user customizations
+bivio_path_insert "$HOME/jupyter/bin" force
+if [[ -r $HOME/jupyter/bashrc ]]; then
+    source "$HOME/jupyter/bashrc"
 fi
