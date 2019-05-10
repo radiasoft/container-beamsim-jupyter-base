@@ -64,7 +64,9 @@ beamsim_jupyter_extra_packages() {
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
         seaborn
         # https://github.com/radiasoft/devops/issues/135
-        sklearn keras tensorflow
+        scikit-learn==0.20
+        keras
+        tensorflow
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
         pandas
         # https://github.com/radiasoft/devops/issues/146
@@ -178,14 +180,14 @@ build_as_root() {
     build_yum install "${r[@]}"
     # Add RPMFusion repo:
     # http://rpmfusion.org/Configuration
-    build_yum install http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-27.noarch.rpm
-    build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-27.noarch.rpm
+    local e=release-$(build_fedora_version).noarch.rpm
+    build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-"$e"
+    build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-"$e"
     # ffmpeg for matplotlib animations
     # yum-utils for yum repo management
     build_yum install ffmpeg texlive-scheme-medium
     # ffmpeg was already installed from rpmfusion, disable it for future packages
     dnf config-manager --set-disabled 'rpmfusion*'
-    build_yum install rscode-pymesh rscode-epics
 }
 
 build_as_run_user() {
@@ -214,11 +216,6 @@ build_as_run_user() {
     chmod a+rx "$beamsim_jupyter_tini_file"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     install_source_bashrc
-    umask 022
-    ipython profile create default
-    cat > ~/.ipython/profile_default/ipython_config.py <<'EOF'
-c.InteractiveShellApp.exec_lines = ["import sys; sys.argv[1:] = []"]
-EOF
     local i
     for i in 2 3; do
         (
