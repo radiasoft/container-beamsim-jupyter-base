@@ -7,9 +7,8 @@ cd
 . "$HOME"/.bashrc
 pyenv activate '{beamsim_jupyter_jupyter_venv}'
 u=${JUPYTERHUB_USER:-${JPY_USER:-}}
-curl https://depot.radiasoft.org/index.sh \
-    | bash -s init-from-git radiasoft/jupyter.radiasoft.org \
-        ${u:+"$u"/jupyter.radiasoft.org}
+curl https://radia.run | bash -s init-from-git radiasoft/jupyter.radiasoft.org \
+    ${u:+"$u"/jupyter.radiasoft.org}
 # must be after to avoid false returns in bashrc, init-from-git, and pyenv
 set -e
 cd '{beamsim_jupyter_notebook_dir}'
