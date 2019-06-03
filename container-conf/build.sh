@@ -176,17 +176,16 @@ build_as_root() {
         libffi-devel
         # https://github.com/radiasoft/devops/issues/153
         fftw3-devel
+        vim-enhanced
     )
     build_yum install "${r[@]}"
-    # Add RPMFusion repo:
+    # Add RPMFusion repo for ffmpeg
     # http://rpmfusion.org/Configuration
     local e=release-$(build_fedora_version).noarch.rpm
     build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-"$e"
     build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-"$e"
-    # ffmpeg for matplotlib animations
-    # yum-utils for yum repo management
     build_yum install ffmpeg texlive-scheme-medium
-    # ffmpeg was already installed from rpmfusion, disable it for future packages
+    # ffmpeg installed from rpmfusion so disable it for other packages
     dnf config-manager --set-disabled 'rpmfusion*'
 }
 
