@@ -76,7 +76,7 @@ beamsim_jupyter_extra_packages() {
     )
     pip install "${x[@]}"
     if [[ $(pyenv version-name) == py3 ]]; then
-        pip --quiet --disable-pip-version-check install 'git+git://github.com/chernals/zgoubidoo#egg=zgoubidoo'
+        pip install 'git+git://github.com/chernals/zgoubidoo#egg=zgoubidoo'
     fi
 }
 
@@ -179,6 +179,7 @@ build_as_root() {
         # https://github.com/radiasoft/devops/issues/153
         fftw3-devel
         vim-enhanced
+        gnuplot
     )
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
