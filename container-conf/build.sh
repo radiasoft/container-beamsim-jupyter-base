@@ -42,6 +42,7 @@ beamsim_jupyter_py3_pip_versions=(
     jupyterhub
     jupyterlab-launcher
     jupyterlab
+
 )
 
 beamsim_jupyter_extra_packages() {
@@ -74,6 +75,9 @@ beamsim_jupyter_extra_packages() {
         yt
     )
     pip install "${x[@]}"
+    if [[ $(pyenv version-name) == py3 ]]; then
+        pip --quiet --disable-pip-version-check install 'git+git://github.com/chernals/zgoubidoo#egg=zgoubidoo'
+    fi
 }
 
 beamsim_jupyter_install_jupyter() {
@@ -172,8 +176,6 @@ build_as_root() {
         # Needed for debugging
         iproute
         strace
-        # https://bugs.python.org/issue31652
-        libffi-devel
         # https://github.com/radiasoft/devops/issues/153
         fftw3-devel
         vim-enhanced
