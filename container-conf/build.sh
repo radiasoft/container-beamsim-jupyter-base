@@ -126,6 +126,11 @@ beamsim_jupyter_install_py3_venv() {
     pip install openPMD-viewer
     jupyter labextension install @jupyter-widgets/jupyterlab-manager
     jupyter labextension install jupyter-matplotlib
+    pip install nbzip
+    jupyter serverextension enable --py nbzip --sys-prefix
+    jupyter nbextension install --py nbzip
+    jupyter nbextension enable --py nbzip
+
 }
 
 beamsim_jupyter_reinstall() {
