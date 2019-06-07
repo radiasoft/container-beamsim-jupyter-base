@@ -116,7 +116,7 @@ beamsim_jupyter_install_py3_venv() {
     install_not_strict_cmd pyenv activate "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
     jupyter serverextension enable --py jupyterlab --sys-prefix
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+    jupyter nbextension enable --py widgetsnbextension --sys-prefix
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
     # will produce a collision (but warning) on vega-lite
     jupyter labextension install @jupyterlab/hub-extension
@@ -128,8 +128,8 @@ beamsim_jupyter_install_py3_venv() {
     jupyter labextension install jupyter-matplotlib
     pip install nbzip
     jupyter serverextension enable --py nbzip --sys-prefix
-    jupyter nbextension install --py nbzip
-    jupyter nbextension enable --py nbzip
+    jupyter nbextension install --py nbzip --sys-prefix
+    jupyter nbextension enable --py nbzip --sys-prefix
 
 }
 
