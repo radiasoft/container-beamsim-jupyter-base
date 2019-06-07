@@ -184,7 +184,7 @@ build_as_root() {
         # https://github.com/radiasoft/devops/issues/153
         fftw3-devel
         vim-enhanced
-        gnuplot
+        gnuplot-minimal
     )
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
