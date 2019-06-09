@@ -32,6 +32,9 @@ Additional codes and major libraries:
   flexible ecosystem of tools, libraries and community resources that
   lets researchers push the state-of-the-art in ML and developers
   easily build and deploy ML powered applications.
+* [TeX Live](https://www.tug.org/texlive/) includes all the major
+  TeX-related programs, macro packages, and fonts that are free
+  software, including support for many languages around the world.
 * [YT](https://yt-project.org) supports structured,
   variable-resolution meshes, unstructured meshes, and discrete or
   sampled data such as particles. Focused on driving
