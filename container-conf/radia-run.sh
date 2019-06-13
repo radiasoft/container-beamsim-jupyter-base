@@ -24,6 +24,7 @@ elif [[ ${JUPYTERHUB_API_URL:-} ]]; then
     exec jupyter-labhub \
       --port="${RADIA_RUN_PORT:-8888}" \
       --ip=0.0.0.0 \
+      --KernelManager.transport=ipc \
       --notebook-dir="$PWD"
     # Note that type -f is not executable, because of the way pyenv finds programs so
     # this is only for error messages.
