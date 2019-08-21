@@ -40,7 +40,7 @@ beamsim_jupyter_py3_pip_versions=(
     ipython
     ipywidgets
     jupyterhub
-    jupyterlab==1.0.6
+    jupyterlab==1.0.2
     jupyterlab-launcher
 )
 
