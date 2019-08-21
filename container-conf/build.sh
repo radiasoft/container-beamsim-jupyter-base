@@ -40,8 +40,7 @@ beamsim_jupyter_py3_pip_versions=(
     ipython
     ipywidgets
     jupyterhub
-    jupyterlab
-
+    jupyterlab==1.0.6
 )
 
 beamsim_jupyter_extra_packages() {
@@ -121,8 +120,7 @@ beamsim_jupyter_install_py3_venv() {
     # will produce a collision (but warning) on vega-lite
     jupyter labextension install \
         @jupyter-widgets/jupyterlab-manager \
-        @jupyterlab/hub-extension \
-        @jupyterlab/notebook
+        @jupyterlab/hub-extension
     # https://github.com/matplotlib/jupyter-matplotlib#installation
     pip install ipympl
     # https://github.com/radiasoft/container-beamsim-jupyter/issues/12
