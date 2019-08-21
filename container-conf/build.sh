@@ -40,7 +40,6 @@ beamsim_jupyter_py3_pip_versions=(
     ipython
     ipywidgets
     jupyterhub
-    jupyterlab-launcher
     jupyterlab
 
 )
@@ -117,16 +116,17 @@ beamsim_jupyter_install_py3_venv() {
     local venv=$1
     install_not_strict_cmd pyenv activate "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
-    jupyter serverextension enable --py jupyterlab --sys-prefix
     jupyter nbextension enable --py widgetsnbextension --sys-prefix
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
     # will produce a collision (but warning) on vega-lite
-    jupyter labextension install @jupyterlab/hub-extension
+    jupyter labextension install \
+        @jupyter-widgets/jupyterlab-manager \
+        @jupyterlab/hub-extension \
+        @jupyterlab/notebook
     # https://github.com/matplotlib/jupyter-matplotlib#installation
     pip install ipympl
     # https://github.com/radiasoft/container-beamsim-jupyter/issues/12
     pip install openPMD-viewer
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager
     jupyter labextension install jupyter-matplotlib
     pip install nbzip
     jupyter serverextension enable --py nbzip --sys-prefix
@@ -174,7 +174,6 @@ build_as_root() {
     local r=(
         emacs-nox
         hostname
-        # Needed to install jupyter/notebook from git
         npm
         # Needed for MPI nodes
         openssh-server
