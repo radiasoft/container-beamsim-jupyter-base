@@ -116,7 +116,6 @@ beamsim_jupyter_install_py3_venv() {
     local venv=$1
     install_not_strict_cmd pyenv activate "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
-    jupyter serverextension enable --py jupyterlab --sys-prefix
     jupyter nbextension enable --py widgetsnbextension --sys-prefix
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
     # will produce a collision (but warning) on vega-lite
