@@ -21,7 +21,7 @@ elif [[ ${JUPYTERHUB_API_URL:-} ]]; then
     # https://github.com/jupyter/docker-stacks/tree/master/base-notebook for
     # why this is started this way.
     # POSIT: 8888 in various jupyterhub repos
-    exec jupyter-labhub \
+    exec jupyter lab \
       --port="${RADIA_RUN_PORT:-8888}" \
       --ip=0.0.0.0 \
       --KernelManager.transport=ipc \
