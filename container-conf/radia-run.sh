@@ -21,14 +21,14 @@ elif [[ ${JUPYTERHUB_API_URL:-} ]]; then
     # https://github.com/jupyter/docker-stacks/tree/master/base-notebook for
     # why this is started this way.
     # POSIT: 8888 in various jupyterhub repos
-    exec jupyter-labhub \
+    exec jupyter lab \
       --port="${RADIA_RUN_PORT:-8888}" \
       --ip=0.0.0.0 \
       --KernelManager.transport=ipc \
       --notebook-dir="$PWD"
     # Note that type -f is not executable, because of the way pyenv finds programs so
     # this is only for error messages.
-    RADIA_RUN_CMD=$(type -f jupyter-labhub)
+    RADIA_RUN_CMD="$(type -f jupyter) lab"
 elif [[ ${JPY_USER:-} ]]; then
     # "legacy" jupyterhub pre-0.8
     # POSIT: 8888 in various jupyterhub repos
