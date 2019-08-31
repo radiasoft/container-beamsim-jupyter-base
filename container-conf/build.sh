@@ -18,8 +18,9 @@ beamsim_jupyter_py2_pip_versions=(
     traitlets==4.3.2
     ipython==5.5.0
 
-    # Doesn't appear to be version locked
+    # These don't need to be version locked
     ipympl
+    plotly
 )
 
 beamsim_jupyter_py3_pip_versions=(
@@ -39,9 +40,9 @@ beamsim_jupyter_py3_pip_versions=(
     traitlets
     ipython
     ipywidgets
-    jupyterhub
-    jupyterlab==1.0.6
-    jupyterlab-launcher
+    ipympl
+    plotly
+    openPMD-viewer
 )
 
 beamsim_jupyter_extra_packages() {
@@ -86,6 +87,25 @@ beamsim_jupyter_install_jupyter() {
     local v=( $(python3 --version) )
     install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
+    # https://github.com/jupyterlab/jupyterlab/issues/4855#issuecomment-524324129
+    pip install --pre jupyterlab
+    pip install jupyterhub jupyterlab-launcher nbzip
+    # needed for ipywidgets
+    jupyter nbextension enable --py widgetsnbextension --sys-prefix
+    # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
+    # will produce a collision (but warning) on vega-lite
+    jupyter labextension install --no-build \
+        @jupyter-widgets/jupyterlab-manager \
+        @jupyterlab/hub-extension \
+        jupyter-matplotlib \
+        jupyterlab-plotly \
+        plotlywidget \
+        jupyterlab-chart-editor
+    jupyter lab build
+    # nbzip only works with classic jupyter
+    jupyter serverextension enable --py nbzip --sys-prefix
+    jupyter nbextension install --py nbzip --sys-prefix
+    jupyter nbextension enable --py nbzip --sys-prefix
 }
 
 beamsim_jupyter_ipy_kernel_env() {
@@ -116,22 +136,6 @@ beamsim_jupyter_install_py3_venv() {
     local venv=$1
     install_not_strict_cmd pyenv activate "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
-    jupyter nbextension enable --py widgetsnbextension --sys-prefix
-    # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
-    # will produce a collision (but warning) on vega-lite
-    jupyter labextension install \
-        @jupyter-widgets/jupyterlab-manager \
-        @jupyterlab/hub-extension
-    # https://github.com/matplotlib/jupyter-matplotlib#installation
-    pip install ipympl
-    # https://github.com/radiasoft/container-beamsim-jupyter/issues/12
-    pip install openPMD-viewer
-    jupyter labextension install jupyter-matplotlib
-    pip install nbzip
-    jupyter serverextension enable --py nbzip --sys-prefix
-    jupyter nbextension install --py nbzip --sys-prefix
-    jupyter nbextension enable --py nbzip --sys-prefix
-
 }
 
 beamsim_jupyter_reinstall() {
@@ -215,8 +219,12 @@ build_as_run_user() {
     export beamsim_jupyter_notebook_template_dir=$beamsim_jupyter_boot_dir/$notebook_dir_base
     export beamsim_jupyter_jupyter_venv=jupyter
     (beamsim_jupyter_install_jupyter)
-    mkdir -p ~/.jupyter "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
-    build_replace_vars jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py
+    mkdir -p "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
+    local f
+    for f in ~/.jupyter/jupyter_notebook_config.py ~/.ipython/profile_default/ipython_notebook_config.py; do
+        mkdir -p "$(dirname "$f")"
+        build_replace_vars "$(basename "$f")" "$f"
+    done
     build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
     chmod a+rx "$beamsim_jupyter_radia_run_boot"
     build_curl https://github.com/krallin/tini/releases/download/v0.16.1/tini > "$beamsim_jupyter_tini_file"
