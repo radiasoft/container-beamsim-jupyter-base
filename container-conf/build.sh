@@ -113,7 +113,7 @@ beamsim_jupyter_install_jupyter() {
 
 beamsim_jupyter_install_jupyter_rs_radia() {
     local f
-    for f in jupyter_rs_vtk jupyter_rs_radia; do
+    for f in jupyter-rs-vtk jupyter-rs-radia; do
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
         pip install .
