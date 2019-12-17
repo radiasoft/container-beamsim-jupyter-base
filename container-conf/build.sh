@@ -78,7 +78,10 @@ beamsim_jupyter_extra_packages() {
     if [[ $(pyenv version-name) == py3 ]]; then
         # https://github.com/radiasoft/jupyter.radiasoft.org/issues/46
         pip install parse
-        pip install 'git+git://github.com/chernals/zgoubidoo#egg=zgoubidoo'
+        local f
+        for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk radiasoft/jupyter-rs-radia; do
+            pip install "git+git://github.com/$f#egg=${f#*/}"
+        done
     fi
 }
 
@@ -87,8 +90,7 @@ beamsim_jupyter_install_jupyter() {
     local v=( $(python3 --version) )
     install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
-    # https://github.com/jupyterlab/jupyterlab/issues/4855#issuecomment-524324129
-    pip install --pre jupyterlab
+    pip install jupyterlab
     pip install jupyterhub jupyterlab-launcher nbzip
     # needed for ipywidgets
     jupyter nbextension enable --py widgetsnbextension --sys-prefix
@@ -101,11 +103,25 @@ beamsim_jupyter_install_jupyter() {
         jupyterlab-plotly \
         plotlywidget \
         jupyterlab-chart-editor
+    beamsim_jupyter_install_radia
     jupyter lab build
     # nbzip only works with classic jupyter
     jupyter serverextension enable --py nbzip --sys-prefix
     jupyter nbextension install --py nbzip --sys-prefix
     jupyter nbextension enable --py nbzip --sys-prefix
+}
+
+beamsim_jupyter_install_jupyter_rs_radia() {
+    local f
+    for f in jupyter_rs_vtk jupyter_rs_radia; do
+        git clone https://github.com/radiasoft/"$f"
+        cd "$f"
+        pip install .
+        jupyter nbextension enable --py --sys-prefix "$f"
+        cd js
+        jupyter labextension install --nobuild .
+        cd ../..
+    done
 }
 
 beamsim_jupyter_ipy_kernel_env() {
