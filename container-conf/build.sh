@@ -103,7 +103,7 @@ beamsim_jupyter_install_jupyter() {
         jupyterlab-plotly \
         plotlywidget \
         jupyterlab-chart-editor
-    beamsim_jupyter_install_radia
+    beamsim_jupyter_install_jupyter_rs_radia
     jupyter lab build
     # nbzip only works with classic jupyter
     jupyter serverextension enable --py nbzip --sys-prefix
