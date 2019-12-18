@@ -75,6 +75,9 @@ beamsim_jupyter_extra_packages() {
         yt
     )
     pip install "${x[@]}"
+    # always reinstall pykern
+    pip uninstall -y pykern >& /dev/null || true
+    pip install pykern
     if [[ $(pyenv version-name) == py3 ]]; then
         # https://github.com/radiasoft/jupyter.radiasoft.org/issues/46
         pip install parse
