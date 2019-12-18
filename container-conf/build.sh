@@ -120,7 +120,7 @@ beamsim_jupyter_install_jupyter_rs_radia() {
         m=${f#*/}
         jupyter nbextension enable --py --sys-prefix "${m//-/_}"
         cd js
-        jupyter labextension install --nobuild .
+        jupyter labextension install --no-build .
         cd ../..
     done
 }
