@@ -204,6 +204,8 @@ build_as_root() {
         bind-utils
         # Needed for debugging
         iproute
+        # https://github.com/radiasoft/devops/issues/188
+        pandoc
         strace
         # https://github.com/radiasoft/devops/issues/153
         fftw3-devel
