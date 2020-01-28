@@ -146,6 +146,7 @@ beamsim_jupyter_ipy_kernel_env() {
                     $ENV{$_} ? qq{  "$_": "$ENV{$_}"} : (),
                     qw(SYNERGIA2DIR LD_LIBRARY_PATH PYTHONPATH),
                 ),
+                qq{  "PYENV_VERSION": "$name"},
             );
         }
         s/^\{/{\n "env": {\n@{[_e()]}\n },/
