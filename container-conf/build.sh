@@ -138,15 +138,14 @@ beamsim_jupyter_ipy_kernel_env() {
     if [[ $x ]]; then
         . "$x"
     fi
-    perl -pi -e '
+    PYENV_VERSION=$name perl -pi -e '
         sub _e {
             return join(
                 qq{,\n},
                 map(
                     $ENV{$_} ? qq{  "$_": "$ENV{$_}"} : (),
-                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PYTHONPATH),
+                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PYENV_VERSION PYTHONPATH),
                 ),
-                qq{  "PYENV_VERSION": "$name"},
             );
         }
         s/^\{/{\n "env": {\n@{[_e()]}\n },/
