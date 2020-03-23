@@ -35,6 +35,7 @@ beamsim_jupyter_py3_pip_versions=(
     jupyter
     nbconvert
     nbformat
+    netCDF4
     notebook
     tornado
     traitlets
@@ -46,6 +47,8 @@ beamsim_jupyter_py3_pip_versions=(
 )
 
 beamsim_jupyter_extra_packages() {
+todo: move these to py3 only?
+
     # https://github.com/numba/numba/issues/3341
     # need first b/c these wheels work, but --no-binary :all: turns off binary:
     # lvm-config failed executing, please point LLVM_CONFIG
@@ -64,10 +67,6 @@ beamsim_jupyter_extra_packages() {
         safeopt
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
         seaborn
-        # https://github.com/radiasoft/devops/issues/135
-        scikit-learn==0.20
-        keras
-        tensorflow
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
         pandas
         # https://github.com/radiasoft/devops/issues/146
