@@ -168,7 +168,7 @@ beamsim_jupyter_rsbeams_style() {
     git clone https://github.com/radiasoft/rsbeams
     for src in rsbeams/rsbeams/rsplot/stylelib/*; do
         dst=$d/$(basename "$src")
-        cp -a "$src" "$dst"
+        cp "$src" "$dst"
     done
     rm -rf rsbeams
 }
