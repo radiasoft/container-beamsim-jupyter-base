@@ -42,54 +42,10 @@ beamsim_jupyter_py3_pip_versions=(
     ipywidgets
     ipympl
     plotly
-    openPMD-viewer
 )
 
-beamsim_jupyter_extra_packages() {
-    # https://github.com/numba/numba/issues/3341
-    # need first b/c these wheels work, but --no-binary :all: turns off binary:
-    # lvm-config failed executing, please point LLVM_CONFIG
-    pip install funcsigs llvmlite
-    # https://github.com/radiasoft/jupyter.radiasoft.org/issues/25
-    pip install numba==0.41.0 --no-binary :all:
-    local x=(
-        # https://github.com/radiasoft/devops/issues/153
-        # needs to be before fbpic
-        pyfftw
-        # https://github.com/radiasoft/devops/issues/152
-        fbpic
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/10
-        GPy
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
-        safeopt
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
-        seaborn
-        # https://github.com/radiasoft/devops/issues/135
-        scikit-learn==0.20
-        keras
-        tensorflow
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
-        pandas
-        # https://github.com/radiasoft/devops/issues/146
-        pillow
-        yt
-    )
-    pip install "${x[@]}"
-    # always reinstall pykern
-    pip uninstall -y pykern >& /dev/null || true
-    pip install pykern
-    if [[ $(pyenv version-name) == py3 ]]; then
-        # https://github.com/radiasoft/jupyter.radiasoft.org/issues/46
-        pip install parse
-        local f
-        for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk radiasoft/jupyter-rs-radia; do
-            pip install "git+git://github.com/$f#egg=${f#*/}"
-        done
-    fi
-}
-
 beamsim_jupyter_install_jupyter() {
-    install_not_strict_cmd pyenv activate py3
+    install_not_strict_cmd pyenv shell py3
     local v=( $(python3 --version) )
     install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
@@ -128,6 +84,39 @@ beamsim_jupyter_install_jupyter_rs_radia() {
     done
 }
 
+beamsim_jupyter_install_py_packages() {
+    # always reinstall pykern
+    pip uninstall -y pykern >& /dev/null || true
+    pip install pykern
+}
+
+beamsim_jupyter_install_py3_packages() {
+    local x=(
+        funcsigs
+        llvmlite
+        numba
+        # needs to be before fbpic https://github.com/radiasoft/devops/issues/153
+        pyfftw
+        # https://github.com/radiasoft/devops/issues/152
+        fbpic
+
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/10
+        GPy
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
+        safeopt
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
+        seaborn pandas
+        yt
+        # needed by zgoubidoo
+        parse
+    )
+    pip install "${x[@]}"
+    local f
+    for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk radiasoft/jupyter-rs-radia; do
+        pip install "git+git://github.com/$f#egg=${f#*/}"
+    done
+}
+
 beamsim_jupyter_ipy_kernel_env() {
     # http://ipython.readthedocs.io/en/stable/install/kernel_install.html
     # http://www.alfredo.motta.name/create-isolated-jupyter-ipython-kernels-with-pyenv-and-virtualenv/
@@ -154,7 +143,7 @@ beamsim_jupyter_ipy_kernel_env() {
 
 beamsim_jupyter_install_py3_venv() {
     local venv=$1
-    install_not_strict_cmd pyenv activate "$venv"
+    install_not_strict_cmd pyenv shell "$venv"
     pip install "${beamsim_jupyter_py3_pip_versions[@]}"
 }
 
@@ -186,14 +175,14 @@ beamsim_jupyter_rsbeams_style() {
 beamsim_jupyter_vars() {
     build_image_base=radiasoft/beamsim
     beamsim_jupyter_boot_dir=$build_run_user_home/.radia-run
-    beamsim_jupyter_tini_file=$beamsim_jupyter_boot_dir/tini
     beamsim_jupyter_radia_run_boot=$beamsim_jupyter_boot_dir/start
     build_is_public=1
-    build_docker_cmd='["'"$beamsim_jupyter_tini_file"'", "--", "'"$beamsim_jupyter_radia_run_boot"'"]'
+    build_docker_cmd='["'"$beamsim_jupyter_radia_run_boot"'"]'
     build_dockerfile_aux="USER $build_run_user"
 }
 
 build_as_root() {
+    umask 022
     local r=(
         emacs-nox
         hostname
@@ -227,7 +216,7 @@ build_as_run_user() {
     # Make sure readable-executable by world in case someone wants to
     # run the container as non-vagrant user.
     umask 022
-    install_not_strict_cmd pyenv activate py2
+    install_not_strict_cmd pyenv shell py2
     if [[ $(pyenv version-name) != py2 ]]; then
         build_err "ASSERTION FAULT: environment is not right, missing pyenv: $(env)"
     fi
@@ -249,8 +238,6 @@ build_as_run_user() {
     done
     build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
     chmod a+rx "$beamsim_jupyter_radia_run_boot"
-    build_curl https://github.com/krallin/tini/releases/download/v0.16.1/tini > "$beamsim_jupyter_tini_file"
-    chmod a+rx "$beamsim_jupyter_tini_file"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     install_source_bashrc
     local i
@@ -259,17 +246,18 @@ build_as_run_user() {
             local v=py$i
             if [[ $i == 3 ]]; then
                 beamsim_jupyter_install_py3_venv "$v"
+                beamsim_jupyter_install_py3_packages
             else
-                install_not_strict_cmd pyenv activate "$v"
+                install_not_strict_cmd pyenv shell "$v"
             fi
-            beamsim_jupyter_extra_packages
+            beamsim_jupyter_install_py_packages
             beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
         )
     done
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
-    install_not_strict_cmd pyenv global py3:py2
+    install_not_strict_cmd pyenv global py3
 }
 
 beamsim_jupyter_vars
