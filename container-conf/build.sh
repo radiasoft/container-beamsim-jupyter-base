@@ -100,6 +100,8 @@ beamsim_jupyter_install_py3_packages() {
         # https://github.com/radiasoft/devops/issues/152
         fbpic
 
+        # https://github.com/radiasoft/jupyter.radiasoft.org/issues/75
+        gpflow
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/10
         GPy
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
