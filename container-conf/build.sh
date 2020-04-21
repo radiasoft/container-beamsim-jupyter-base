@@ -44,10 +44,11 @@ beamsim_jupyter_py3_pip_versions=(
     plotly
 )
 
-beamsim_jupyter_install_jupyter() {
+beamsim_jupyter_install_jupyter_venv() {
     install_not_strict_cmd pyenv shell py3
     local v=( $(python3 --version) )
     install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
+    # sets pyenv
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
     pip install jupyterlab
     pip install jupyterhub jupyterlab-launcher nbzip
@@ -68,10 +69,14 @@ beamsim_jupyter_install_jupyter() {
     jupyter serverextension enable --py nbzip --sys-prefix
     jupyter nbextension install --py nbzip --sys-prefix
     jupyter nbextension enable --py nbzip --sys-prefix
+    install_not_strict_cmd pyenv shell --unset
 }
 
 beamsim_jupyter_install_jupyter_rs_radia() {
     local f m
+    local p=$(pwd)
+    mkdir -p ~/src/radiasoft
+    cd ~/src/radiasoft
     for f in jupyter-rs-vtk jupyter-rs-radia; do
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
@@ -82,6 +87,7 @@ beamsim_jupyter_install_jupyter_rs_radia() {
         jupyter labextension install --no-build .
         cd ../..
     done
+    cd "$p"
 }
 
 beamsim_jupyter_install_py_packages() {
@@ -114,9 +120,12 @@ beamsim_jupyter_install_py3_packages() {
     )
     pip install "${x[@]}"
     local f
-    for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk radiasoft/jupyter-rs-radia; do
-        pip install "git+git://github.com/$f#egg=${f#*/}"
+    for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk jupyter-rs-radia; do
+        pip install "git+https://github.com/$f"
     done
+    # If you need to install a particular branch:
+    # pip install "git+https://github.com/radiasoft/jupyter-rs-radia@issue/30"
+
 }
 
 beamsim_jupyter_ipy_kernel_env() {
@@ -219,11 +228,9 @@ build_as_run_user() {
     # Make sure readable-executable by world in case someone wants to
     # run the container as non-vagrant user.
     umask 022
-    install_not_strict_cmd pyenv shell py2
-    if [[ $(pyenv version-name) != py2 ]]; then
+    if [[ $(pyenv version-name) != py3 ]]; then
         build_err "ASSERTION FAULT: environment is not right, missing pyenv: $(env)"
     fi
-    beamsim_jupyter_reinstall
     cd "$build_guest_conf"
     beamsim_jupyter_vars
     local notebook_dir_base=jupyter
@@ -232,7 +239,7 @@ build_as_run_user() {
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
     export beamsim_jupyter_notebook_template_dir=$beamsim_jupyter_boot_dir/$notebook_dir_base
     export beamsim_jupyter_jupyter_venv=jupyter
-    (beamsim_jupyter_install_jupyter)
+    beamsim_jupyter_install_jupyter_venv
     mkdir -p "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
     local f
     for f in ~/.jupyter/jupyter_notebook_config.py ~/.ipython/profile_default/ipython_config.py; do
@@ -245,22 +252,22 @@ build_as_run_user() {
     install_source_bashrc
     local i
     for i in 2 3; do
-        (
-            local v=py$i
-            if [[ $i == 3 ]]; then
-                beamsim_jupyter_install_py3_venv "$v"
-                beamsim_jupyter_install_py3_packages
-            else
-                install_not_strict_cmd pyenv shell "$v"
-            fi
-            beamsim_jupyter_install_py_packages
-            beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
-        )
+        local v=py$i
+        if [[ $i == 3 ]]; then
+            # sets pyenv
+            beamsim_jupyter_install_py3_venv "$v"
+            beamsim_jupyter_install_py3_packages
+        else
+            install_not_strict_cmd pyenv shell "$v"
+            beamsim_jupyter_reinstall
+        fi
+        beamsim_jupyter_install_py_packages
+        beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
+        install_not_strict_cmd pyenv shell --unset
     done
     beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
-    install_not_strict_cmd pyenv global py3
 }
 
 beamsim_jupyter_vars

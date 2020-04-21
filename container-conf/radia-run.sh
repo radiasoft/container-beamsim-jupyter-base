@@ -5,7 +5,7 @@
 #
 cd
 source "$HOME"/.bashrc
-pyenv activate '{beamsim_jupyter_jupyter_venv}'
+pyenv shell '{beamsim_jupyter_jupyter_venv}'
 u=${JUPYTERHUB_USER:-${JPY_USER:-}}
 curl https://depot.radiasoft.org/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org \
