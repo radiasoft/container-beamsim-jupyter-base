@@ -120,7 +120,7 @@ beamsim_jupyter_install_py3_packages() {
     )
     pip install "${x[@]}"
     local f
-    for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk jupyter-rs-radia; do
+    for f in chernals/zgoubidoo radiasoft/jupyter-rs-vtk radiasoft/jupyter-rs-radia; do
         pip install "git+https://github.com/$f"
     done
     # If you need to install a particular branch:
