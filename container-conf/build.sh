@@ -63,6 +63,8 @@ beamsim_jupyter_install_jupyter_venv() {
         jupyterlab-plotly \
         plotlywidget \
         jupyterlab-chart-editor
+    # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
+    jupyter serverextension enable --py jupyterlab --sys-prefix
     beamsim_jupyter_install_jupyter_rs_radia
     jupyter lab build
     # nbzip only works with classic jupyter
