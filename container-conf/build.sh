@@ -50,8 +50,8 @@ beamsim_jupyter_install_jupyter_venv() {
     install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
     # sets pyenv
     beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
-    pip install jupyterlab
-    pip install jupyterhub jupyterlab-launcher nbzip
+    # POSIT: versions same in container-jupyterhub/build.sh
+    pip install jupyterlab==2.1.0 jupyterhub==1.1.0 jupyterlab-launcher nbzip
     # needed for ipywidgets
     jupyter nbextension enable --py widgetsnbextension --sys-prefix
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420

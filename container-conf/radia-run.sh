@@ -6,7 +6,7 @@
 cd
 source "$HOME"/.bashrc
 pyenv shell '{beamsim_jupyter_jupyter_venv}'
-u=${JUPYTERHUB_USER:-${JPY_USER:-}}
+u=${JUPYTERHUB_USER:-}
 curl https://depot.radiasoft.org/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org \
         ${u:+"$u"/jupyter.radiasoft.org}
@@ -21,10 +21,11 @@ elif [[ ${JUPYTERHUB_API_URL:-} ]]; then
     # https://github.com/jupyter/docker-stacks/tree/master/base-notebook for
     # why this is started this way.
     # POSIT: 8888 in various jupyterhub repos
-    exec jupyter lab \
+    exec jupyterhub-singleuser \
       --port="${RADIA_RUN_PORT:-8888}" \
       --ip=0.0.0.0 \
       --KernelManager.transport=ipc \
+      --NotebookApp.default_url=/lab \
       --notebook-dir="$PWD"
     # Note that type -f is not executable, because of the way pyenv finds programs so
     # this is only for error messages.
