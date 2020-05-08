@@ -7,7 +7,7 @@ cd
 source "$HOME"/.bashrc
 pyenv shell '{beamsim_jupyter_jupyter_venv}'
 u=${JUPYTERHUB_USER:-}
-curl https://depot.radiasoft.org/index.sh \
+curl {install_depot_server}/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org \
         ${u:+"$u"/jupyter.radiasoft.org}
 # must be after to avoid false returns in bashrc, init-from-git, and pyenv
