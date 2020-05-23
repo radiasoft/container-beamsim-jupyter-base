@@ -241,6 +241,7 @@ build_as_run_user() {
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
     export beamsim_jupyter_notebook_template_dir=$beamsim_jupyter_boot_dir/$notebook_dir_base
     export beamsim_jupyter_jupyter_venv=jupyter
+    export beamsim_jupyter_depot_server=$(install_depot_server)
     beamsim_jupyter_install_jupyter_venv
     mkdir -p "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
     local f
