@@ -115,7 +115,7 @@ beamsim_jupyter_install_py3_packages() {
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
         safeopt
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
-        seaborn pandas
+        seaborn
         yt
         # needed by zgoubidoo
         parse
