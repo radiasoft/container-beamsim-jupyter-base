@@ -62,7 +62,8 @@ beamsim_jupyter_install_jupyter_venv() {
         jupyter-matplotlib \
         jupyterlab-plotly \
         plotlywidget \
-        jupyterlab-chart-editor
+        jupyterlab-chart-editor \
+        jupyterlab-favorites
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
     jupyter serverextension enable --py jupyterlab --sys-prefix
     beamsim_jupyter_install_jupyter_rs_radia
