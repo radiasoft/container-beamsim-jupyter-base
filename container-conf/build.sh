@@ -1,106 +1,18 @@
 #!/bin/bash
 
-# Jupyter no longer supports py2
-beamsim_jupyter_py2_pip_versions=(
-    SQLAlchemy==1.2.4
-    alembic==0.9.8
-    bleach==2.1.2
-    ipykernel==4.8.2
-    ipython-genutils==0.2.0
-    jupyter-client==5.2.2
-    jupyter-console==5.2.0
-    jupyter-core==4.4.0
-    jupyter==1.0.0
-    nbconvert==5.3.1
-    nbformat==4.4.0
-    notebook==5.3.0rc1
-    tornado==4.5.3
-    traitlets==4.3.2
-    ipython==5.5.0
-
-    # These don't need to be version locked
-    ipympl
-    plotly
-)
-
-beamsim_jupyter_py3_pip_versions=(
-    SQLAlchemy
-    alembic
-    bleach
-    ipykernel
-    ipython-genutils
-    jupyter-client
-    jupyter-console
-    jupyter-core
-    jupyter
-    nbconvert
-    nbformat
-    notebook
-    tornado
-    traitlets
-    ipython
-    ipywidgets
-    ipympl
-    plotly
-)
-
-beamsim_jupyter_install_jupyter_venv() {
-    install_not_strict_cmd pyenv shell py3
-    local v=( $(python3 --version) )
-    install_not_strict_cmd pyenv virtualenv "${v[1]}" "$beamsim_jupyter_jupyter_venv"
-    # sets pyenv
-    beamsim_jupyter_install_py3_venv "$beamsim_jupyter_jupyter_venv"
+beamsim_jupyter_jupyterlab() {
     # POSIT: versions same in container-jupyterhub/build.sh
-    pip install jupyterlab==2.1.0 jupyterhub==1.1.0 jupyterlab-launcher nbzip
-    # needed for ipywidgets
-    jupyter nbextension enable --py widgetsnbextension --sys-prefix
-    # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
-    # will produce a collision (but warning) on vega-lite
-    jupyter labextension install --no-build \
-        @jupyter-widgets/jupyterlab-manager \
-        @jupyterlab/hub-extension \
-        jupyter-matplotlib \
-        jupyterlab-plotly \
-        plotlywidget \
-        jupyterlab-chart-editor \
-        jupyterlab-favorites
-    # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    jupyter serverextension enable --py jupyterlab --sys-prefix
-    beamsim_jupyter_install_jupyter_rs_radia
-    jupyter lab build
-    # nbzip only works with classic jupyter
-    jupyter serverextension enable --py nbzip --sys-prefix
-    jupyter nbextension install --py nbzip --sys-prefix
-    jupyter nbextension enable --py nbzip --sys-prefix
-    install_not_strict_cmd pyenv shell --unset
-}
-
-beamsim_jupyter_install_jupyter_rs_radia() {
-    local f m
-    local p=$(pwd)
-    mkdir -p ~/src/radiasoft
-    cd ~/src/radiasoft
-    for f in jupyter-rs-vtk jupyter-rs-radia; do
-        git clone https://github.com/radiasoft/"$f"
-        cd "$f"
-        pip install .
-        m=${f#*/}
-        jupyter nbextension enable --py --sys-prefix "${m//-/_}"
-        cd js
-        jupyter labextension install --no-build .
-        cd ../..
-    done
-    cd "$p"
-}
-
-beamsim_jupyter_install_py_packages() {
-    # always reinstall pykern
-    pip uninstall -y pykern >& /dev/null || true
-    pip install pykern
-}
-
-beamsim_jupyter_install_py3_packages() {
     local x=(
+        ipympl
+        ipywidgets
+        jupyter
+        jupyterhub==1.1.0
+        jupyterlab-launcher
+        jupyterlab==2.1.0
+        nbzip
+        plotly
+
+        # modules users have requested
         funcsigs
         llvmlite
         numba
@@ -122,14 +34,44 @@ beamsim_jupyter_install_py3_packages() {
         parse
     )
     pip install "${x[@]}"
-    local f
-    # chernals/zgoubidoo
-    for f in radiasoft/jupyter-rs-vtk radiasoft/jupyter-rs-radia; do
-        pip install "git+https://github.com/$f"
-    done
-    # If you need to install a particular branch:
-    # pip install "git+https://github.com/radiasoft/jupyter-rs-radia@issue/30"
+    # needed for ipywidgets
+    jupyter nbextension enable --py widgetsnbextension --sys-prefix
+    # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
+    # will produce a collision (but warning) on vega-lite
+    jupyter labextension install --no-build \
+        @jupyter-widgets/jupyterlab-manager \
+        @jupyterlab/hub-extension \
+        jupyter-matplotlib \
+        jupyterlab-plotly \
+        plotlywidget \
+        jupyterlab-chart-editor \
+        jupyterlab-favorites
+    # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
+    jupyter serverextension enable --py jupyterlab --sys-prefix
+    beamsim_jupyter_rs_radia
+    jupyter lab build
+    # nbzip only works with classic jupyter
+    jupyter serverextension enable --py nbzip --sys-prefix
+    jupyter nbextension install --py nbzip --sys-prefix
+    jupyter nbextension enable --py nbzip --sys-prefix
+}
 
+beamsim_jupyter_rs_radia() {
+    local f m
+    local p=$(pwd)
+    mkdir -p ~/src/radiasoft
+    cd ~/src/radiasoft
+    for f in jupyter-rs-vtk jupyter-rs-radia; do
+        git clone https://github.com/radiasoft/"$f"
+        cd "$f"
+        pip install .
+        m=${f#*/}
+        jupyter nbextension enable --py --sys-prefix "${m//-/_}"
+        cd js
+        jupyter labextension install --no-build .
+        cd ../..
+    done
+    cd "$p"
 }
 
 beamsim_jupyter_ipy_kernel_env() {
@@ -154,24 +96,6 @@ beamsim_jupyter_ipy_kernel_env() {
         }
         s/^\{/{\n "env": {\n@{[_e()]}\n },/
     ' "${where[-1]}"/kernel.json
-}
-
-beamsim_jupyter_install_py3_venv() {
-    local venv=$1
-    install_not_strict_cmd pyenv shell "$venv"
-    pip install "${beamsim_jupyter_py3_pip_versions[@]}"
-}
-
-beamsim_jupyter_reinstall() {
-    # Need to uninstall jupyter/ipython, and reinstall to get the latest versions for
-    # widgetsnbextension
-    local f
-    for f in ipython_genutils ipyparallel ipykernel ipywidgets ipython jupyter_client jupyter_core; do
-        pip uninstall -y "$f" >& /dev/null || true
-    done
-
-    pip install "${beamsim_jupyter_py2_pip_versions[@]}"
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
 }
 
 beamsim_jupyter_rsbeams_style() {
@@ -200,18 +124,10 @@ beamsim_jupyter_vars() {
 build_as_root() {
     umask 022
     local r=(
-        emacs-nox
-        hostname
-        npm
         # Needed for MPI nodes
         openssh-server
-        # For cluster start
-        bind-utils
-        # Needed for debugging
-        iproute
         # https://github.com/radiasoft/devops/issues/188
         pandoc
-        strace
         # https://github.com/radiasoft/devops/issues/153
         fftw3-devel
         vim-enhanced
@@ -242,9 +158,13 @@ build_as_run_user() {
     export beamsim_jupyter_boot_dir
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
     export beamsim_jupyter_notebook_template_dir=$beamsim_jupyter_boot_dir/$notebook_dir_base
-    export beamsim_jupyter_jupyter_venv=jupyter
+    local i=3
+    local v=py$i
+    export beamsim_jupyter_jupyter_venv=$v
     export beamsim_jupyter_depot_server=$(install_depot_server)
-    beamsim_jupyter_install_jupyter_venv
+    beamsim_jupyter_jupyterlab
+    beamsim_jupyter_rsbeams_style
+    beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
     mkdir -p "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
     local f
     for f in ~/.jupyter/jupyter_notebook_config.py ~/.ipython/profile_default/ipython_config.py; do
@@ -255,22 +175,6 @@ build_as_run_user() {
     chmod a+rx "$beamsim_jupyter_radia_run_boot"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     install_source_bashrc
-    local i
-    for i in 2 3; do
-        local v=py$i
-        if [[ $i == 3 ]]; then
-            # sets pyenv
-            beamsim_jupyter_install_py3_venv "$v"
-            beamsim_jupyter_install_py3_packages
-        else
-            install_not_strict_cmd pyenv shell "$v"
-            beamsim_jupyter_reinstall
-        fi
-        beamsim_jupyter_install_py_packages
-        beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
-        install_not_strict_cmd pyenv shell --unset
-    done
-    beamsim_jupyter_rsbeams_style
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
 }
