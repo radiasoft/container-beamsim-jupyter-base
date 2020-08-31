@@ -14,18 +14,6 @@ export LANGUAGE=en_US.UTF-8
 unset PROMPT_COMMAND
 if [[ ${PS1:-} ]]; then
     export PS1='\W$ '
-    # WORKAROUND: https://github.com/radiasoft/jupyter.radiasoft.org/issues/15
-    export TERM=ansi
-fi
-
-# Workaround $PYENV_VERSION being set in
-# radiasoft/containers/radiasoft/beamsim-jupyter/radia-run.sh
-#TODO(robnagler) Need to find a cleaner fix, which will start
-# terminado without $PYENV_VERSION.
-if [[ ${PYENV_VERSION:-} && -z ${RS_TERMINADO_INIT:-} ]]; then
-    export RS_TERMINADO_INIT=1
-    pyenv deactivate >&/dev/null || true
-    pyenv shell --unset >&/dev/null || true
 fi
 
 # Allow user customizations
