@@ -113,7 +113,7 @@ beamsim_jupyter_rsbeams_style() {
 }
 
 beamsim_jupyter_vars() {
-    build_image_base=radiasoft/beamsim
+    build_image_base=radiasoft/sirepo
     beamsim_jupyter_boot_dir=$build_run_user_home/.radia-run
     beamsim_jupyter_radia_run_boot=$beamsim_jupyter_boot_dir/start
     build_is_public=1
