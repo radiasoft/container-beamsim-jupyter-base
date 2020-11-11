@@ -90,7 +90,7 @@ beamsim_jupyter_ipy_kernel_env() {
                 qq{,\n},
                 map(
                     $ENV{$_} ? qq{  "$_": "$ENV{$_}"} : (),
-                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PYENV_VERSION PYTHONPATH),
+                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PKG_CONFIG_PATH PYENV_VERSION PYTHONPATH),
                 ),
             );
         }
