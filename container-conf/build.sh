@@ -157,7 +157,6 @@ build_as_run_user() {
     export beamsim_jupyter_notebook_dir=$build_run_user_home/$notebook_dir_base
     export beamsim_jupyter_boot_dir
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
-    export beamsim_jupyter_notebook_template_dir=$beamsim_jupyter_boot_dir/$notebook_dir_base
     local i=3
     local v=py$i
     export beamsim_jupyter_jupyter_venv=$v
@@ -165,7 +164,7 @@ build_as_run_user() {
     beamsim_jupyter_jupyterlab
     beamsim_jupyter_rsbeams_style
     beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
-    mkdir -p "$beamsim_jupyter_notebook_dir" "$beamsim_jupyter_notebook_template_dir"
+    mkdir -p "$beamsim_jupyter_notebook_dir"
     local f
     for f in ~/.jupyter/jupyter_notebook_config.py ~/.ipython/profile_default/ipython_config.py; do
         mkdir -p "$(dirname "$f")"
