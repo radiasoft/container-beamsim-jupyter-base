@@ -6,10 +6,14 @@ simulation codes, please see
 
 Additional codes and major libraries:
 
-* [FBPIC (Fourier-Bessel Particle-In-Cell)](https://fbpic.github.io)is
+* [FBPIC (Fourier-Bessel Particle-In-Cell)](https://fbpic.github.io) is
   a Particle-In-Cell (PIC) code for relativistic plasma physics. It is
   especially well-suited for physical simulations of laser-wakefield
   acceleration and plasma-wakefield acceleration.
+* [FEniCS](https://fenicsproject.org) is is a popular open-source (LGPLv3)
+  computing platform for solving partial differential equations (PDEs). 
+  FEniCS enables users to quickly translate scientific models into efficient 
+  finite element code.
 * [GPy](https://sheffieldml.github.io/GPy/) is a Gaussian Process (GP)
   framework written in python, from the Sheffield machine learning
   group.
