@@ -8,6 +8,7 @@ beamsim_jupyter_jupyterlab() {
         jupyter
         jupyterhub==1.1.0
         jupyterlab-launcher
+        jupyterlab-server==1.2.0
         jupyterlab==2.1.0
         nbzip
         plotly
@@ -80,17 +81,13 @@ beamsim_jupyter_ipy_kernel_env() {
     local display_name=$1
     local name=$2
     local where=( $(python -m ipykernel install --display-name "$display_name" --name "$name" --user) )
-    local x=$(ls ~/.pyenv/pyenv.d/exec/*synergia*.bash 2>/dev/null || true)
-    if [[ $x ]]; then
-        . "$x"
-    fi
     PYENV_VERSION=$name perl -pi -e '
         sub _e {
             return join(
                 qq{,\n},
                 map(
                     $ENV{$_} ? qq{  "$_": "$ENV{$_}"} : (),
-                    qw(SYNERGIA2DIR LD_LIBRARY_PATH PKG_CONFIG_PATH PYENV_VERSION PYTHONPATH),
+                    qw(LD_LIBRARY_PATH PKG_CONFIG_PATH PYENV_VERSION PYTHONPATH),
                 ),
             );
         }
