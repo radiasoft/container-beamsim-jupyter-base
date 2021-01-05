@@ -46,13 +46,13 @@ beamsim_jupyter_jupyterlab() {
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
     # will produce a collision (but warning) on vega-lite
     jupyter labextension install --no-build \
-        @jupyter-widgets/jupyterlab-manager \
-        @jupyterlab/hub-extension \
-        jupyter-matplotlib \
-        jupyterlab-plotly \
-        plotlywidget \
-        jupyterlab-chart-editor \
-        jupyterlab-favorites
+        @jupyter-widgets/jupyterlab-manager@2.0.0 \
+        @jupyterlab/hub-extension@2.1.0 \
+        jupyter-matplotlib@0.7.4 \
+        jupyterlab-plotly@4.14.1 \
+        plotlywidget@4.14.1 \
+        jupyterlab-chart-editor@4.10.0 \
+        jupyterlab-favorites@2.0.0
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
     jupyter serverextension enable --py jupyterlab --sys-prefix
     beamsim_jupyter_rs_radia
