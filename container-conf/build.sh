@@ -33,6 +33,12 @@ beamsim_jupyter_jupyterlab() {
         yt
         # needed by zgoubidoo
         parse
+
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/32
+        # installs bokeh, too
+        git+https://github.com/slaclab/lume-genesis
+        git+https://github.com/ChristopherMayes/openPMD-beamphysics
+        git+https://github.com/radiasoft/zfel
     )
     pip install "${x[@]}"
     # needed for ipywidgets
