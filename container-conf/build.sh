@@ -56,7 +56,10 @@ beamsim_jupyter_jupyterlab() {
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
     jupyter serverextension enable --py jupyterlab --sys-prefix
     beamsim_jupyter_rs_radia
-    jupyter lab build
+    if ! jupyter lab build; then
+        tail -100 /tmp/jupyterlab*.log || true
+        build_err 'juptyer lab failed to build'
+    fi
     # nbzip only works with classic jupyter
     jupyter serverextension enable --py nbzip --sys-prefix
     jupyter nbextension install --py nbzip --sys-prefix
