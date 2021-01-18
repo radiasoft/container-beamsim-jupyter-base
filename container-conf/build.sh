@@ -5,6 +5,8 @@ beamsim_jupyter_jupyterlab() {
     local x=(
         ipympl
         ipywidgets
+        # https://github.com/jupyter/notebook/issues/2435
+        jedi==0.17.2
         jupyter
         jupyterhub==1.1.0
         jupyterlab-launcher
