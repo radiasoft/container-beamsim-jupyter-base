@@ -3,7 +3,7 @@
 beamsim_jupyter_jupyterlab() {
     # POSIT: versions same in container-jupyterhub/build.sh
     local x=(
-        ipympl
+        ipympl==0.5.8
         ipywidgets
         # https://github.com/jupyter/notebook/issues/2435
         jedi==0.17.2
