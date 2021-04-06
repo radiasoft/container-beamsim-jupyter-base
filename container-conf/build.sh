@@ -32,6 +32,9 @@ beamsim_jupyter_jupyterlab() {
         safeopt
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
         seaborn
+        # https://github.com/radiasoft/container-beamsim-jupyter/issues/38
+        torch
+        torchvision
         yt
         # needed by zgoubidoo
         parse
