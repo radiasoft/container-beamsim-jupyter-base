@@ -35,7 +35,6 @@ beamsim_jupyter_jupyterlab() {
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/38
         torch
         torchvision
-        yt
         # needed by zgoubidoo
         parse
 
