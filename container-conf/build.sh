@@ -35,6 +35,7 @@ beamsim_jupyter_jupyterlab() {
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/38
         torch
         torchvision
+        pygmo
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/39
         botorch
         # needed by zgoubidoo
