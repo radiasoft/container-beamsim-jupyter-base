@@ -1,12 +1,14 @@
 #!/bin/bash
 
 beamsim_jupyter_jupyterlab() {
+    # https://github.com/jupyter/notebook/issues/2435
+    # installed by rpm-code/codes/rsbeams.sh, but here to
+    # document
+    install_assert_pip_version jedi 0.17.2 'check codes/rsbeams.sh'
     # POSIT: versions same in container-jupyterhub/build.sh
     local x=(
         ipympl==0.5.8
         ipywidgets
-        # https://github.com/jupyter/notebook/issues/2435
-        jedi==0.17.2
         jupyter
         jupyterhub==1.1.0
         jupyterlab-launcher
@@ -24,8 +26,9 @@ beamsim_jupyter_jupyterlab() {
         # https://github.com/radiasoft/devops/issues/152
         fbpic
 
-        # https://github.com/radiasoft/jupyter.radiasoft.org/issues/75
-        gpflow
+# temporarily disable https://github.com/radiasoft/container-beamsim-jupyter/issues/40
+#        # https://github.com/radiasoft/jupyter.radiasoft.org/issues/75
+#        gpflow
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/10
         GPy
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
