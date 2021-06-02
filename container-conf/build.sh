@@ -49,10 +49,6 @@ beamsim_jupyter_jupyterlab() {
         git+https://github.com/slaclab/lume-genesis
         git+https://github.com/ChristopherMayes/openPMD-beamphysics
         git+https://github.com/radiasoft/zfel
-
-        # https://github.com/radiasoft/download/issues/164
-        git+https://github.com/PyZgoubi/PyZgoubi.git
-        zgoubi_metadata
     )
     pip install "${x[@]}"
     # needed for ipywidgets
