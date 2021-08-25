@@ -97,26 +97,6 @@ beamsim_jupyter_rs_radia() {
     cd "$p"
 }
 
-beamsim_jupyter_ipy_kernel_env() {
-    # http://ipython.readthedocs.io/en/stable/install/kernel_install.html
-    # http://www.alfredo.motta.name/create-isolated-jupyter-ipython-kernels-with-pyenv-and-virtualenv/
-    local display_name=$1
-    local name=$2
-    local where=( $(python -m ipykernel install --display-name "$display_name" --name "$name" --user) )
-    PYENV_VERSION=$name perl -pi -e '
-        sub _e {
-            return join(
-                qq{,\n},
-                map(
-                    $ENV{$_} ? qq{  "$_": "$ENV{$_}"} : (),
-                    qw(LD_LIBRARY_PATH PKG_CONFIG_PATH PYENV_VERSION PYTHONPATH),
-                ),
-            );
-        }
-        s/^\{/{\n "env": {\n@{[_e()]}\n },/
-    ' "${where[-1]}"/kernel.json
-}
-
 beamsim_jupyter_rsbeams_style() {
     local dst
     local src
@@ -178,13 +158,9 @@ build_as_run_user() {
     export beamsim_jupyter_notebook_dir=$build_run_user_home/$notebook_dir_base
     export beamsim_jupyter_boot_dir
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
-    local i=3
-    local v=py$i
-    export beamsim_jupyter_jupyter_venv=$v
     export beamsim_jupyter_depot_server=$(install_depot_server)
     beamsim_jupyter_jupyterlab
     beamsim_jupyter_rsbeams_style
-    beamsim_jupyter_ipy_kernel_env "Python $i" "$v"
     mkdir -p "$beamsim_jupyter_notebook_dir"
     local f
     for f in ~/.jupyter/jupyter_notebook_config.py ~/.ipython/profile_default/ipython_config.py; do
