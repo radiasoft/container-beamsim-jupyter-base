@@ -5,8 +5,6 @@
 #
 cd
 source "$HOME"/.bashrc
-# POSIT: same env as kernel defined in rscode-ipykernel
-pyenv shell 'py3'
 curl {beamsim_jupyter_depot_server}/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org
 # must be after to avoid false returns in bashrc, init-from-git, and pyenv
