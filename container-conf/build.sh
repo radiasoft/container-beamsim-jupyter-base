@@ -123,6 +123,7 @@ beamsim_jupyter_vars() {
 build_as_root() {
     umask 022
     local r=(
+        rscode-ipykernel
         # Needed for MPI nodes
         openssh-server
         # https://github.com/radiasoft/devops/issues/188
