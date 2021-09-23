@@ -5,6 +5,9 @@
 #
 cd
 source "$HOME"/.bashrc
+if [[ -r $HOME/jupyter/bash_profile ]]; then
+    source "$HOME/jupyter/bash_profile"
+fi
 curl {beamsim_jupyter_depot_server}/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org
 # must be after to avoid false returns in bashrc, init-from-git, and pyenv
