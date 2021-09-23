@@ -5,8 +5,8 @@
 #
 cd
 source "$HOME"/.bashrc
-if [[ -r $HOME/jupyter/bash_profile ]]; then
-    source "$HOME/jupyter/bash_profile"
+if [[ -r $HOME/jupyter/pre_jupyter_bashrc ]]; then
+    source "$HOME/jupyter/pre_jupyter_bashrc"
 fi
 curl {beamsim_jupyter_depot_server}/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org
