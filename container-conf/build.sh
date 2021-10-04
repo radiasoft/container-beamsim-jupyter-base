@@ -7,15 +7,17 @@ beamsim_jupyter_jupyterlab() {
     install_assert_pip_version jedi 0.17.2 'check codes/rsbeams.sh'
     # POSIT: versions same in container-jupyterhub/build.sh
     local x=(
-        ipympl==0.5.8
-        ipywidgets
-        jupyter
-        jupyterhub==1.1.0
-        jupyterlab-launcher
-        jupyterlab-server==1.2.0
-        jupyterlab==2.1.0
-        nbzip
-        plotly
+	ipympl==0.8.0
+	ipywidgets==7.6.5
+	jupyter==1.0.0
+	jupyter-packaging==0.10.6
+	jupyterhub==1.4.2
+	jupyterlab-launcher==0.13.1
+	jupyterlab-server==2.8.2
+	jupyterlab==3.1.14
+	plotly
+	jupyterlab-favorites==3.0.0
+	jupyterlab-widgets==1.0.2
 
         # modules users have requested
         funcsigs
@@ -54,45 +56,29 @@ beamsim_jupyter_jupyterlab() {
         bluesky
     )
     pip install "${x[@]}"
-    # needed for ipywidgets
-    jupyter nbextension enable --py widgetsnbextension --sys-prefix
     # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
     # will produce a collision (but warning) on vega-lite
-    jupyter labextension install --no-build \
-        @jupyter-widgets/jupyterlab-manager@2.0.0 \
-        @jupyterlab/hub-extension@2.1.0 \
-        jupyter-matplotlib@0.7.4 \
-        jupyterlab-plotly@4.14.1 \
-        plotlywidget@4.14.1 \
-        jupyterlab-chart-editor@4.10.0 \
-        jupyterlab-favorites@2.0.0
+    jupyter labextension install --no-build jupyterlab-chart-editor@4.14.3
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    jupyter serverextension enable --py jupyterlab --sys-prefix
     beamsim_jupyter_rs_radia
-    if ! jupyter lab build; then
+    # Need dev-build because jupyter lab build defaults to dev build
+    # when there are local extensions (jupyter-rs-*)
+    if ! jupyter lab build --dev-build=False; then
         tail -100 /tmp/jupyterlab*.log || true
         build_err 'juptyer lab failed to build'
     fi
-    # nbzip only works with classic jupyter
-    jupyter serverextension enable --py nbzip --sys-prefix
-    jupyter nbextension install --py nbzip --sys-prefix
-    jupyter nbextension enable --py nbzip --sys-prefix
 }
 
 beamsim_jupyter_rs_radia() {
-    local f m
+    local f
     local p=$(pwd)
     mkdir -p ~/src/radiasoft
-    cd ~/src/radiasoft
     for f in jupyter-rs-vtk jupyter-rs-radia; do
+	cd ~/src/radiasoft
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
         pip install .
-        m=${f#*/}
-        jupyter nbextension enable --py --sys-prefix "${m//-/_}"
-        cd js
         jupyter labextension install --no-build .
-        cd ../..
     done
     cd "$p"
 }
@@ -164,7 +150,7 @@ build_as_run_user() {
     beamsim_jupyter_rsbeams_style
     mkdir -p "$beamsim_jupyter_notebook_dir"
     local f
-    for f in ~/.jupyter/jupyter_notebook_config.py ~/.ipython/profile_default/ipython_config.py; do
+    for f in ~/.jupyter/jupyter_server_config.py ~/.ipython/profile_default/ipython_config.py; do
         mkdir -p "$(dirname "$f")"
         build_replace_vars "$(basename "$f")" "$f"
     done
