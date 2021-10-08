@@ -73,7 +73,7 @@ beamsim_jupyter_rs_radia() {
     local f
     local p=$(pwd)
     mkdir -p ~/src/radiasoft
-    for f in jupyter-rs-vtk jupyter-rs-radia; do
+    for f in jupyter_rs_vtk jupyter_rs_radia; do
 	cd ~/src/radiasoft
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
