@@ -26,10 +26,6 @@ elif [[ ${JUPYTERHUB_API_URL:-} ]]; then
       --ip=0.0.0.0 \
       --KernelManager.transport=ipc \
       --notebook-dir="$PWD"
-    # TODO(e-carlin):  this is after exec, unreachable?
-    # Note that type -f is not executable, because of the way pyenv finds programs so
-    # this is only for error messages.
-    RADIA_RUN_CMD="$(type -f jupyter) lab"
 else
     # Start jupyter lab possibly with radia-run supplied token
     # urandom never blocks and is good enough for this case
@@ -49,5 +45,3 @@ EOF
     fi
     exec $RADIA_RUN_CMD
 fi
-echo "ERROR: '$RADIA_RUN_CMD': exec failed'" 1>&2
-exit 1
