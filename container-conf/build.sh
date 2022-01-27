@@ -125,7 +125,7 @@ build_as_root() {
     local e=release-$(build_fedora_version).noarch.rpm
     build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-"$e"
     build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-"$e"
-    build_yum install ffmpeg texlive-scheme-medium
+    build_yum install ffmpeg texlive-scheme-medium texlive-collection-latexextra
     # https://github.com/radiasoft/container-beamsim-jupyter/issues/40
     build_yum install rscode-graphtool
     # ffmpeg installed from rpmfusion so disable it for other packages
