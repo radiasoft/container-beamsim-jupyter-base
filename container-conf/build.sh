@@ -60,7 +60,7 @@ beamsim_jupyter_jupyterlab() {
     # will produce a collision (but warning) on vega-lite
     jupyter labextension install --no-build jupyterlab-chart-editor@4.14.3
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    beamsim_jupyter_rs_radia
+    beamsim_jupyter_lab
     # Need dev-build because jupyter lab build defaults to dev build
     # when there are local extensions (jupyter-rs-*)
     if ! jupyter lab build --dev-build=False; then
@@ -69,11 +69,11 @@ beamsim_jupyter_jupyterlab() {
     fi
 }
 
-beamsim_jupyter_rs_radia() {
+beamsim_jupyter_lab() {
     local f
     local p=$(pwd)
     mkdir -p ~/src/radiasoft
-    for f in jupyter_rs_vtk jupyter_rs_radia; do
+    for f in jupyter_rs_vtk jupyter_rs_radia rsjupyterlab; do
 	cd ~/src/radiasoft
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
