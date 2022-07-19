@@ -11,6 +11,7 @@ beamsim_jupyter_jupyterlab() {
 	ipywidgets==7.6.5
 	jupyter==1.0.0
 	jupyter-packaging==0.10.6
+        git+https://github.com/radiasoft/jupyter-tensorboard-proxy.git
 	jupyterhub==1.4.2
 	jupyterlab-launcher==0.13.1
 	jupyterlab-server==2.8.2
@@ -56,9 +57,13 @@ beamsim_jupyter_jupyterlab() {
         bluesky
     )
     pip install "${x[@]}"
-    # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
-    # will produce a collision (but warning) on vega-lite
-    jupyter labextension install --no-build jupyterlab-chart-editor@4.14.3
+    local l=(
+        @jupyterlab/server-proxy
+        # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
+        # will produce a collision (but warning) on vega-lite
+        jupyterlab-chart-editor@4.14.3
+    )
+    jupyter labextension install --no-build "${l[@]}"
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
     beamsim_jupyter_lab
     # Need dev-build because jupyter lab build defaults to dev build
