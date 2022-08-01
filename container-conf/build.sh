@@ -153,8 +153,13 @@ build_as_run_user() {
     beamsim_jupyter_jupyterlab
     beamsim_jupyter_rsbeams_style
     mkdir -p "$beamsim_jupyter_notebook_dir"
+    local j='jupyter_server_config.py'
+    declare -a k="$(ls $(dirname $(jupyter kernelspec list --json | jq -r .kernelspecs.py3.resource_dir)))"
+    echo "c.KernelSpecManager.allowed_kernelspecs = $(python -c 'import sys; print(set(sys.argv[1:]))' \
+        ${k[@]})" \
+         >> "$j"
     local f
-    for f in ~/.jupyter/jupyter_server_config.py ~/.ipython/profile_default/ipython_config.py; do
+    for f in ~/.jupyter/"$j" ~/.ipython/profile_default/ipython_config.py; do
         mkdir -p "$(dirname "$f")"
         build_replace_vars "$(basename "$f")" "$f"
     done
