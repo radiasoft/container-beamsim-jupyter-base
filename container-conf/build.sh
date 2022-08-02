@@ -153,11 +153,14 @@ build_as_run_user() {
     beamsim_jupyter_jupyterlab
     beamsim_jupyter_rsbeams_style
     mkdir -p "$beamsim_jupyter_notebook_dir"
-    local j='jupyter_server_config.py'
-    declare -a k="$(ls $(dirname $(jupyter kernelspec list --json | jq -r .kernelspecs.py3.resource_dir)))"
-    echo "c.KernelSpecManager.allowed_kernelspecs = $(python -c 'import sys; print(set(sys.argv[1:]))' \
-        ${k[@]})" \
-         >> "$j"
+    declare j=jupyter_server_config.py
+    python - <<'EOF' >> "$j"
+from pykern import pkio
+d = pkio.py_path("~/.local/share/jupyter/kernels/*/kernel.json")
+s = set(x.dirpath().basename for x in pkio.sorted_glob(d))
+assert s, f"could not find any kernels in dir={d}"
+print(f"c.KernelSpecManager.allowed_kernelspecs = {s}\n")
+EOF
     local f
     for f in ~/.jupyter/"$j" ~/.ipython/profile_default/ipython_config.py; do
         mkdir -p "$(dirname "$f")"
