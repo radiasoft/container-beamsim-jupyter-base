@@ -65,13 +65,15 @@ beamsim_jupyter_jupyterlab() {
     )
     jupyter labextension install --no-build "${l[@]}"
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    beamsim_jupyter_lab
+    # git.radiasoft.org/download/issues/321
+    # Do not build until we upgrade to f36
+    # beamsim_jupyter_lab
     # Need dev-build because jupyter lab build defaults to dev build
     # when there are local extensions (jupyter-rs-*)
-    if ! jupyter lab build --dev-build=False; then
-        tail -100 /tmp/jupyterlab*.log || true
-        build_err 'juptyer lab failed to build'
-    fi
+    # if ! jupyter lab build --dev-build=False; then
+    #     tail -100 /tmp/jupyterlab*.log || true
+    #     build_err 'juptyer lab failed to build'
+    # fi
 }
 
 beamsim_jupyter_lab() {
