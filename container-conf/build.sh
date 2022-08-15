@@ -122,6 +122,7 @@ build_as_root() {
         fftw3-devel
         vim-enhanced
         gnuplot-minimal
+        ncl-devel
     )
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
