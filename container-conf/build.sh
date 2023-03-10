@@ -6,7 +6,7 @@ beamsim_jupyter_jupyterlab() {
     # document
     install_assert_pip_version jedi 0.17.2 'check codes/rsbeams.sh'
     # POSIT: versions same in container-jupyterhub/build.sh
-    local x=(
+    declare x=(
 	ipympl==0.8.0
 	ipywidgets==7.6.5
 	jupyter==1.0.0
@@ -41,7 +41,6 @@ beamsim_jupyter_jupyterlab() {
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/38
         torch
         torchvision
-        pygmo==2.16.1
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/39
         botorch
         # needed by zgoubidoo
@@ -57,7 +56,13 @@ beamsim_jupyter_jupyterlab() {
         bluesky
     )
     pip install "${x[@]}"
-    local l=(
+
+    if install_version_fedora_lt_36; then
+        install_pip_install pygmo==2.16.1
+    else
+        install_pip_install pygmo
+    fi
+    declare l=(
         @jupyterlab/server-proxy
         # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
         # will produce a collision (but warning) on vega-lite
@@ -67,16 +72,17 @@ beamsim_jupyter_jupyterlab() {
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
     beamsim_jupyter_lab
     # Need dev-build because jupyter lab build defaults to dev build
-    # when there are local extensions (jupyter-rs-*)
-    if ! jupyter lab build --dev-build=False; then
+    # when there are declare extensions (jupyter-rs-*)
+    # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter/issues/81 for reason behind NODE_OPTIONS
+    if ! NODE_OPTIONS=--openssl-legacy-provider jupyter lab build --dev-build=False; then
         tail -100 /tmp/jupyterlab*.log || true
         build_err 'juptyer lab failed to build'
     fi
 }
 
 beamsim_jupyter_lab() {
-    local f
-    local p=$(pwd)
+    declare f
+    declare p=$(pwd)
     mkdir -p ~/src/radiasoft
     for f in jupyter_rs_vtk jupyter_rs_radia rsjupyterlab; do
 	cd ~/src/radiasoft
@@ -89,10 +95,10 @@ beamsim_jupyter_lab() {
 }
 
 beamsim_jupyter_rsbeams_style() {
-    local dst
-    local src
+    declare dst
+    declare src
     # https://github.com/radiasoft/container-beamsim-jupyter/issues/27
-    local d=~/.config/matplotlib/stylelib
+    declare d=~/.config/matplotlib/stylelib
     mkdir -p "$d"
     git clone https://github.com/radiasoft/rsbeams
     for src in rsbeams/rsbeams/rsplot/stylelib/*; do
@@ -112,7 +118,7 @@ beamsim_jupyter_vars() {
 
 build_as_root() {
     umask 022
-    local r=(
+    declare r=(
         rscode-ipykernel
         # Needed for MPI nodes
         openssh-server
@@ -127,7 +133,7 @@ build_as_root() {
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
     # http://rpmfusion.org/Configuration
-    local e=release-$(build_fedora_version).noarch.rpm
+    declare e=release-$(build_fedora_version).noarch.rpm
     build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-"$e"
     build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-"$e"
     build_yum install ffmpeg texlive-scheme-medium texlive-collection-latexextra
@@ -146,7 +152,7 @@ build_as_run_user() {
     fi
     cd "$build_guest_conf"
     beamsim_jupyter_vars
-    local notebook_dir_base=jupyter
+    declare notebook_dir_base=jupyter
     export beamsim_jupyter_notebook_dir=$build_run_user_home/$notebook_dir_base
     export beamsim_jupyter_boot_dir
     export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
@@ -162,7 +168,7 @@ s = set(x.dirpath().basename for x in pkio.sorted_glob(d))
 assert s, f"could not find any kernels in dir={d}"
 print(f"c.KernelSpecManager.allowed_kernelspecs = {s}\n")
 EOF
-    local f
+    declare f
     for f in ~/.jupyter/"$j" ~/.ipython/profile_default/ipython_config.py; do
         mkdir -p "$(dirname "$f")"
         build_replace_vars "$(basename "$f")" "$f"
