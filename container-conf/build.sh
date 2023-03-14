@@ -57,10 +57,13 @@ beamsim_jupyter_jupyterlab() {
     )
     pip install "${x[@]}"
 
+    declare n
     if install_version_fedora_lt_36; then
         install_pip_install pygmo==2.16.1
+        n=
     else
         install_pip_install pygmo
+        n=--openssl-legacy-provider
     fi
     declare l=(
         @jupyterlab/server-proxy
@@ -74,7 +77,7 @@ beamsim_jupyter_jupyterlab() {
     # Need dev-build because jupyter lab build defaults to dev build
     # when there are declare extensions (jupyter-rs-*)
     # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter/issues/81 for reason behind NODE_OPTIONS
-    if ! NODE_OPTIONS=--openssl-legacy-provider jupyter lab build --dev-build=False; then
+    if ! NODE_OPTIONS="$n" jupyter lab build --dev-build=False; then
         tail -100 /tmp/jupyterlab*.log || true
         build_err 'juptyer lab failed to build'
     fi
