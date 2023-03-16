@@ -140,8 +140,6 @@ build_as_root() {
     build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-"$e"
     build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-"$e"
     build_yum install ffmpeg texlive-scheme-medium texlive-collection-latexextra
-    # https://github.com/radiasoft/container-beamsim-jupyter/issues/40
-    build_yum install rscode-graphtool
     # ffmpeg installed from rpmfusion so disable it for other packages
     dnf config-manager --set-disabled 'rpmfusion*'
 }
