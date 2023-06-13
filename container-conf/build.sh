@@ -132,6 +132,7 @@ build_as_root() {
         vim-enhanced
         gnuplot-minimal
         ncl-devel
+        rscode-geant4
     )
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
