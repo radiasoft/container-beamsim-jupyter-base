@@ -123,8 +123,6 @@ build_as_root() {
     umask 022
     declare r=(
         rscode-ipykernel
-        # Needed for MPI nodes
-        openssh-server
         # https://github.com/radiasoft/devops/issues/188
         pandoc
         # https://github.com/radiasoft/devops/issues/153
