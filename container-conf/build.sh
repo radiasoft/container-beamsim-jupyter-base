@@ -21,9 +21,9 @@ beamsim_jupyter_jupyterlab() {
 	jupyterlab-widgets==1.0.2
 
         # modules users have requested
-        funcsigs
         llvmlite
         numba
+
         # needs to be before fbpic https://github.com/radiasoft/devops/issues/153
         pyfftw
         # https://github.com/radiasoft/devops/issues/152
@@ -38,9 +38,6 @@ beamsim_jupyter_jupyterlab() {
         safeopt
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
         seaborn
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/38
-        torch
-        torchvision
         # https://github.com/radiasoft/container-beamsim-jupyter/issues/39
         botorch
         # needed by zgoubidoo
