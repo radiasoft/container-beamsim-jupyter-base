@@ -53,6 +53,7 @@ beamsim_jupyter_jupyterlab() {
         bluesky
     )
     pip install "${x[@]}"
+    julia -e 'using Pkg; Pkg.add("IJulia")'
 
     declare n
     if install_version_fedora_lt_36; then
