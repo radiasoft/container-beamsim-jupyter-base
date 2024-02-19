@@ -130,6 +130,7 @@ build_as_root() {
         ncl-devel
         rscode-geant4
         rscode-julia
+        rscode-madness
     )
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
