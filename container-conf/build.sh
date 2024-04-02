@@ -1,6 +1,6 @@
 #!/bin/bash
 
-beamsim_jupyter_jupyterlab() {
+beamsim_jupyter_base_jupyterlab() {
     # https://github.com/jupyter/notebook/issues/2435
     # installed by rpm-code/codes/rsbeams.sh, but here to
     # document
@@ -71,7 +71,7 @@ beamsim_jupyter_jupyterlab() {
     )
     jupyter labextension install --no-build "${l[@]}"
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    beamsim_jupyter_lab
+    beamsim_jupyter_base_lab
     # Need dev-build because jupyter lab build defaults to dev build
     # when there are declare extensions (jupyter-rs-*)
     # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter-base/issues/81 for reason behind NODE_OPTIONS
@@ -81,7 +81,7 @@ beamsim_jupyter_jupyterlab() {
     fi
 }
 
-beamsim_jupyter_lab() {
+beamsim_jupyter_base_lab() {
     declare f
     declare p=$(pwd)
     mkdir -p ~/src/radiasoft
@@ -95,7 +95,7 @@ beamsim_jupyter_lab() {
     cd "$p"
 }
 
-beamsim_jupyter_rsbeams_style() {
+beamsim_jupyter_base_rsbeams_style() {
     declare dst
     declare src
     # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/27
@@ -109,12 +109,12 @@ beamsim_jupyter_rsbeams_style() {
     rm -rf rsbeams
 }
 
-beamsim_jupyter_vars() {
+beamsim_jupyter_base_vars() {
     build_image_base=radiasoft/beamsim
-    beamsim_jupyter_boot_dir=$build_run_user_home/.radia-run
-    beamsim_jupyter_radia_run_boot=$beamsim_jupyter_boot_dir/start
+    beamsim_jupyter_base_boot_dir=$build_run_user_home/.radia-run
+    beamsim_jupyter_base_radia_run_boot=$beamsim_jupyter_base_boot_dir/start
     build_is_public=1
-    build_docker_cmd='["'"$beamsim_jupyter_radia_run_boot"'"]'
+    build_docker_cmd='["'"$beamsim_jupyter_base_radia_run_boot"'"]'
 }
 
 build_as_root() {
@@ -151,15 +151,15 @@ build_as_run_user() {
         build_err "ASSERTION FAULT: environment is not right, missing pyenv: $(env)"
     fi
     cd "$build_guest_conf"
-    beamsim_jupyter_vars
+    beamsim_jupyter_base_vars
     declare notebook_dir_base=jupyter
-    export beamsim_jupyter_notebook_dir=$build_run_user_home/$notebook_dir_base
-    export beamsim_jupyter_boot_dir
-    export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
-    export beamsim_jupyter_depot_server=$(install_depot_server)
-    beamsim_jupyter_jupyterlab
-    beamsim_jupyter_rsbeams_style
-    mkdir -p "$beamsim_jupyter_notebook_dir"
+    export beamsim_jupyter_base_notebook_dir=$build_run_user_home/$notebook_dir_base
+    export beamsim_jupyter_base_boot_dir
+    export beamsim_jupyter_base_notebook_bashrc=$notebook_dir_base/bashrc
+    export beamsim_jupyter_base_depot_server=$(install_depot_server)
+    beamsim_jupyter_base_jupyterlab
+    beamsim_jupyter_base_rsbeams_style
+    mkdir -p "$beamsim_jupyter_base_notebook_dir"
     declare j=jupyter_server_config.py
     python - <<'EOF' >> "$j"
 from pykern import pkio
@@ -173,13 +173,13 @@ EOF
         mkdir -p "$(dirname "$f")"
         build_replace_vars "$(basename "$f")" "$f"
     done
-    mkdir -p "$(dirname "$beamsim_jupyter_radia_run_boot")"
-    build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
-    chmod a+rx "$beamsim_jupyter_radia_run_boot"
+    mkdir -p "$(dirname "$beamsim_jupyter_base_radia_run_boot")"
+    build_replace_vars radia-run.sh "$beamsim_jupyter_base_radia_run_boot"
+    chmod a+rx "$beamsim_jupyter_base_radia_run_boot"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     install_source_bashrc
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
 }
 
-beamsim_jupyter_vars
+beamsim_jupyter_base_vars
