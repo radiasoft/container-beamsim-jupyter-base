@@ -173,6 +173,7 @@ EOF
         mkdir -p "$(dirname "$f")"
         build_replace_vars "$(basename "$f")" "$f"
     done
+    mkdir -p "$(dirname "$beamsim_jupyter_radia_run_boot")"
     build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
     chmod a+rx "$beamsim_jupyter_radia_run_boot"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
