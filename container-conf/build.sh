@@ -1,6 +1,6 @@
 #!/bin/bash
 
-beamsim_jupyter_jupyterlab() {
+beamsim_jupyter_base_jupyterlab() {
     # https://github.com/jupyter/notebook/issues/2435
     # installed by rpm-code/codes/rsbeams.sh, but here to
     # document
@@ -29,27 +29,27 @@ beamsim_jupyter_jupyterlab() {
         # https://github.com/radiasoft/devops/issues/152
         fbpic
 
-# temporarily disable https://github.com/radiasoft/container-beamsim-jupyter/issues/40
+# temporarily disable https://github.com/radiasoft/container-beamsim-jupyter-base/issues/40
 #        # https://github.com/radiasoft/jupyter.radiasoft.org/issues/75
 #        gpflow
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/10
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/10
         GPy
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/11
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/11
         safeopt
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/13
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/13
         seaborn
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/39
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/39
         botorch
         # needed by zgoubidoo
         parse
 
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/32
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/32
         # installs bokeh, too
         git+https://github.com/slaclab/lume-genesis
         git+https://github.com/ChristopherMayes/openPMD-beamphysics
         git+https://github.com/radiasoft/zfel
 
-        # https://github.com/radiasoft/container-beamsim-jupyter/issues/42
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/42
         bluesky
     )
     pip install "${x[@]}"
@@ -71,17 +71,17 @@ beamsim_jupyter_jupyterlab() {
     )
     jupyter labextension install --no-build "${l[@]}"
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    beamsim_jupyter_lab
+    beamsim_jupyter_base_lab
     # Need dev-build because jupyter lab build defaults to dev build
     # when there are declare extensions (jupyter-rs-*)
-    # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter/issues/81 for reason behind NODE_OPTIONS
+    # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter-base/issues/81 for reason behind NODE_OPTIONS
     if ! NODE_OPTIONS="$n" jupyter lab build --dev-build=False; then
         tail -100 /tmp/jupyterlab*.log || true
         build_err 'juptyer lab failed to build'
     fi
 }
 
-beamsim_jupyter_lab() {
+beamsim_jupyter_base_lab() {
     declare f
     declare p=$(pwd)
     mkdir -p ~/src/radiasoft
@@ -95,10 +95,10 @@ beamsim_jupyter_lab() {
     cd "$p"
 }
 
-beamsim_jupyter_rsbeams_style() {
+beamsim_jupyter_base_rsbeams_style() {
     declare dst
     declare src
-    # https://github.com/radiasoft/container-beamsim-jupyter/issues/27
+    # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/27
     declare d=~/.config/matplotlib/stylelib
     mkdir -p "$d"
     git clone https://github.com/radiasoft/rsbeams
@@ -109,12 +109,12 @@ beamsim_jupyter_rsbeams_style() {
     rm -rf rsbeams
 }
 
-beamsim_jupyter_vars() {
-    build_image_base=radiasoft/sirepo
-    beamsim_jupyter_boot_dir=$build_run_user_home/.radia-run
-    beamsim_jupyter_radia_run_boot=$beamsim_jupyter_boot_dir/start
+beamsim_jupyter_base_vars() {
+    build_image_base=radiasoft/beamsim
+    beamsim_jupyter_base_boot_dir=$build_run_user_home/.radia-run
+    beamsim_jupyter_base_radia_run_boot=$beamsim_jupyter_base_boot_dir/start
     build_is_public=1
-    build_docker_cmd='["'"$beamsim_jupyter_radia_run_boot"'"]'
+    build_docker_cmd='["'"$beamsim_jupyter_base_radia_run_boot"'"]'
 }
 
 build_as_root() {
@@ -151,15 +151,15 @@ build_as_run_user() {
         build_err "ASSERTION FAULT: environment is not right, missing pyenv: $(env)"
     fi
     cd "$build_guest_conf"
-    beamsim_jupyter_vars
+    beamsim_jupyter_base_vars
     declare notebook_dir_base=jupyter
-    export beamsim_jupyter_notebook_dir=$build_run_user_home/$notebook_dir_base
-    export beamsim_jupyter_boot_dir
-    export beamsim_jupyter_notebook_bashrc=$notebook_dir_base/bashrc
-    export beamsim_jupyter_depot_server=$(install_depot_server)
-    beamsim_jupyter_jupyterlab
-    beamsim_jupyter_rsbeams_style
-    mkdir -p "$beamsim_jupyter_notebook_dir"
+    export beamsim_jupyter_base_notebook_dir=$build_run_user_home/$notebook_dir_base
+    export beamsim_jupyter_base_boot_dir
+    export beamsim_jupyter_base_notebook_bashrc=$notebook_dir_base/bashrc
+    export beamsim_jupyter_base_depot_server=$(install_depot_server)
+    beamsim_jupyter_base_jupyterlab
+    beamsim_jupyter_base_rsbeams_style
+    mkdir -p "$beamsim_jupyter_base_notebook_dir"
     declare j=jupyter_server_config.py
     python - <<'EOF' >> "$j"
 from pykern import pkio
@@ -173,12 +173,13 @@ EOF
         mkdir -p "$(dirname "$f")"
         build_replace_vars "$(basename "$f")" "$f"
     done
-    build_replace_vars radia-run.sh "$beamsim_jupyter_radia_run_boot"
-    chmod a+rx "$beamsim_jupyter_radia_run_boot"
+    mkdir -p "$(dirname "$beamsim_jupyter_base_radia_run_boot")"
+    build_replace_vars radia-run.sh "$beamsim_jupyter_base_radia_run_boot"
+    chmod a+rx "$beamsim_jupyter_base_radia_run_boot"
     build_replace_vars post_bivio_bashrc ~/.post_bivio_bashrc
     install_source_bashrc
     # Removes the export TERM=dumb, which is incorrect for jupyter
     rm -f ~/.pre_bivio_bashrc
 }
 
-beamsim_jupyter_vars
+beamsim_jupyter_base_vars

@@ -8,11 +8,11 @@ source "$HOME"/.bashrc
 if [[ -r $HOME/jupyter/pre_jupyter_bashrc ]]; then
     source "$HOME/jupyter/pre_jupyter_bashrc"
 fi
-curl {beamsim_jupyter_depot_server}/index.sh \
+curl {beamsim_jupyter_base_depot_server}/index.sh \
     | bash -s init-from-git radiasoft/jupyter.radiasoft.org
 # must be after to avoid false returns in bashrc, init-from-git, and pyenv
 set -e
-cd '{beamsim_jupyter_notebook_dir}'
+cd '{beamsim_jupyter_base_notebook_dir}'
 if [[ ${RADIA_RUN_CMD:-} ]]; then
     # Can't quote this, because environment var, not a bash array
     exec $RADIA_RUN_CMD
