@@ -7,18 +7,19 @@ beamsim_jupyter_base_jupyterlab() {
     install_assert_pip_version jedi 0.17.2 'check codes/rsbeams.sh'
     # POSIT: versions same in container-jupyterhub/build.sh
     declare x=(
-	ipympl==0.8.0
-	ipywidgets==7.6.5
-	jupyter==1.0.0
-	jupyter-packaging==0.10.6
+        ipympl==0.8.0
+        ipywidgets==7.6.5
+        jupyter==1.0.0
+        jupyter-packaging==0.10.6
         git+https://github.com/radiasoft/jupyter-tensorboard-proxy.git
-	jupyterhub==1.4.2
-	jupyterlab-launcher==0.13.1
-	jupyterlab-server==2.8.2
-	jupyterlab==3.1.14
-	plotly
-	jupyterlab-favorites==3.0.0
-	jupyterlab-widgets==1.0.2
+        jupyterhub==1.4.2
+        jupyterlab-launcher==0.13.1
+        jupyterlab-server==2.8.2
+        jupyterlab==3.1.14
+        plotly
+        jupyterlab-favorites==3.0.0
+        jupyterlab-widgets==1.0.2
+        mlflow
 
         # modules users have requested
         llvmlite
@@ -86,7 +87,7 @@ beamsim_jupyter_base_lab() {
     declare p=$(pwd)
     mkdir -p ~/src/radiasoft
     for f in jupyter_rs_vtk jupyter_rs_radia rsjupyterlab; do
-	cd ~/src/radiasoft
+        cd ~/src/radiasoft
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
         pip install .
