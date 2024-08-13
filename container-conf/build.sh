@@ -47,6 +47,9 @@ beamsim_jupyter_base_jupyterlab() {
         # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/32
         # installs bokeh, too
         git+https://github.com/slaclab/lume-genesis
+        eval-type-backport # lume-genesis missing dep
+        lark # lume-genesis missing dep
+        pydantic-settings # lume-genesis missing dep
         git+https://github.com/ChristopherMayes/openPMD-beamphysics
         git+https://github.com/radiasoft/zfel
 
