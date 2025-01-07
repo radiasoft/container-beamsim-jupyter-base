@@ -7,7 +7,7 @@ beamsim_jupyter_base_jupyterlab() {
     install_assert_pip_version jedi 0.17.2 'check codes/rsbeams.sh'
     # POSIT: versions same in container-jupyterhub/build.sh
     declare x=(
-        ipympl==0.8.0
+        ipympl==0.9.6
         ipywidgets==7.6.5
         jupyter==1.0.0
         jupyter-packaging==0.10.6
