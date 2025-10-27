@@ -89,11 +89,12 @@ beamsim_jupyter_base_lab() {
     declare f
     declare p=$(pwd)
     mkdir -p ~/src/radiasoft
-    for f in jupyter_rs_vtk jupyter_rs_radia rsjupyterlab; do
+    for f in jupyter_rs_vtk jupyter_rs_radia; do
         cd ~/src/radiasoft
         git clone https://github.com/radiasoft/"$f"
         cd "$f"
         pip install .
+        cd js
         jupyter labextension install --no-build .
     done
     cd "$p"
