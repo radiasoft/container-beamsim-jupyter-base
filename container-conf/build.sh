@@ -1,10 +1,6 @@
 #!/bin/bash
 
 beamsim_jupyter_base_jupyterlab() {
-    # https://github.com/jupyter/notebook/issues/2435
-    # installed by rpm-code/codes/rsbeams.sh, but here to
-    # document
-    install_assert_pip_version jedi 0.17.2 'check codes/rsbeams.sh'
     # POSIT: versions same in container-jupyterhub/build.sh
     declare x=(
         ipympl==0.9.6
@@ -19,54 +15,16 @@ beamsim_jupyter_base_jupyterlab() {
         plotly
         jupyterlab-favorites==3.0.0
         jupyterlab-widgets==1.0.2
-        mlflow
 
-        # modules users have requested
-        llvmlite
-        numba
-
-        # needs to be before fbpic https://github.com/radiasoft/devops/issues/153
-        pyfftw
-        # https://github.com/radiasoft/devops/issues/152
-        fbpic
-
-# temporarily disable https://github.com/radiasoft/container-beamsim-jupyter-base/issues/40
-#        # https://github.com/radiasoft/jupyter.radiasoft.org/issues/75
-#        gpflow
-        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/10
-        GPy
-        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/11
-        safeopt
-        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/13
-        seaborn
-        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/39
-        botorch
-        # needed by zgoubidoo
-        parse
-
-        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/32
-        # installs bokeh, too
-        git+https://github.com/slaclab/lume-genesis
-        eval-type-backport # lume-genesis missing dep
-        lark # lume-genesis missing dep
-        pydantic-settings # lume-genesis missing dep
-        git+https://github.com/ChristopherMayes/openPMD-beamphysics
-        git+https://github.com/radiasoft/zfel
-
-        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/42
-        bluesky
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/117
+        jupyterlab-h5web
     )
     pip install "${x[@]}"
     julia -e 'using Pkg; Pkg.add("IJulia")'
 
     declare n
-    if install_version_fedora_lt_36; then
-        install_pip_install pygmo==2.16.1
-        n=
-    else
-        install_pip_install pygmo
-        n=--openssl-legacy-provider
-    fi
+    install_pip_install pygmo
+    n=--openssl-legacy-provider
     declare l=(
         @jupyterlab/server-proxy
         # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
