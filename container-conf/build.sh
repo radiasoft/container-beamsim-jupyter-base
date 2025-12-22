@@ -84,17 +84,16 @@ build_as_root() {
     umask 022
     declare r=(
         rscode-ipykernel
-        # https://github.com/radiasoft/devops/issues/188
+        # Needed to export notebooks https://github.com/radiasoft/devops/issues/188
         pandoc
-        # https://github.com/radiasoft/devops/issues/153
-        fftw3-devel
         vim-enhanced
         gnuplot-minimal
         ncl-devel
         rscode-geant4
         rscode-julia
         rscode-madness
-        rscode-genesis4
+        # USPAS (temporary?) https://github.com/radiasoft/container-beamsim-jupyter-base/issues/117
+        mc
     )
     build_yum install "${r[@]}"
     # Add RPMFusion repo for ffmpeg
