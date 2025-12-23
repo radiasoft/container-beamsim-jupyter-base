@@ -67,6 +67,10 @@ beamsim_jupyter_base_jupyterlab() {
         'jupyterlab-favorites==3.3.1'
         'plotly==6.5.0'
 
+        # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/118
+        'numba==0.63.1'
+        'llvmlite==0.46.0'
+
         # jupyterhub
         'jupyterhub==5.4.3'
         'Mako==1.3.10'
