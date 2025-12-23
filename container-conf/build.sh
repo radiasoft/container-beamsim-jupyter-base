@@ -3,30 +3,87 @@
 beamsim_jupyter_base_jupyterlab() {
     # POSIT: versions same in container-jupyterhub/build.sh
     declare x=(
-        ipympl==0.9.6
-        ipywidgets==7.6.5
-        jupyter==1.0.0
-        jupyter-packaging==0.10.6
-        git+https://github.com/radiasoft/jupyter-tensorboard-proxy.git
-        jupyterhub==1.4.2
-        jupyterlab-launcher==0.13.1
-        jupyterlab-server==2.8.2
-        jupyterlab==3.1.14
-        plotly
-        jupyterlab-favorites==3.0.0
-        jupyterlab-widgets==1.0.2
+        # These lists were created by pip installing packages and seeing which versions were installed.
+        # The "Successfully installed" line which pip outputs
+
+        # pip install jupyterlab
+        'jupyterlab==4.5.1'
+        'argon2-cffi==25.1.0'
+        'argon2-cffi-bindings==25.1.0'
+        'arrow==1.4.0'
+        'async-lru==2.0.5'
+        'beautifulsoup4==4.14.3'
+        'bleach==6.3.0'
+        'defusedxml==0.7.1'
+        'fastjsonschema==2.21.2'
+        'fqdn==1.5.1'
+        'isoduration==20.11.0'
+        'json5==0.12.1'
+        'jsonpointer==3.0.0'
+        'jupyter-events==0.12.0'
+        'jupyter-lsp==2.3.0'
+        'jupyter-server==2.17.0'
+        'jupyter-server-terminals==0.5.3'
+        'jupyterlab-pygments==0.3.0'
+        'jupyterlab-server==2.28.0'
+        'mistune==3.1.4'
+        'nbclient==0.10.3'
+        'nbconvert==7.16.6'
+        'nbformat==5.10.4'
+        'notebook-shim==0.2.4'
+        'pandocfilters==1.5.1'
+        'prometheus-client==0.23.1'
+        'python-json-logger==4.0.0'
+        'rfc3339-validator==0.1.4'
+        'rfc3986-validator==0.1.1'
+        'rfc3987-syntax==1.1.0'
+        'send2trash==1.8.3'
+        'soupsieve==2.8.1'
+        'terminado==0.18.1'
+        'tinycss2==1.4.0'
+        'uri-template==1.3.0'
+        'webcolors==25.10.0'
+        'webencodings==0.5.1'
+        'websocket-client==1.9.0'
+
+        # pip install ipympl
+        'ipympl==0.9.8'
+        'ipywidgets==8.1.8'
+        'jupyterlab_widgets==3.0.16'
+        'widgetsnbextension==4.0.15'
+
+        # pip install jupyter
+        'jupyter==1.1.1'
+        'jupyter-console==6.6.3'
+        'notebook==7.5.1'
+
+        # pip install jupyter-packaging
+        'jupyter-packaging==0.12.3'
+        'deprecation==2.1.0'
+        'tomlkit==0.13.3'
+
+        # Individual packages (not depending on each other)
+        'jupyterlab-launcher==0.13.1'
+        'jupyterlab-favorites==3.3.1'
+        'plotly==6.5.0'
+
+        # jupyterhub
+        'jupyterhub==5.4.3'
+        'Mako==1.3.10'
+        'alembic==1.17.2'
+        'certipy==0.2.2'
+        'oauthlib==3.3.1'
+        'pamela==1.2.0'
 
         # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/117
-        jupyterlab-h5web
+        # pip install jupyterlab-h5web
+        'jupyterlab-h5web==12.6.1'
+        'h5grove==2.3.0'
+        'orjson==3.11.5'
     )
     pip install "${x[@]}"
     julia -e 'using Pkg; Pkg.add("IJulia")'
-
-    declare n
-    install_pip_install pygmo
-    n=--openssl-legacy-provider
     declare l=(
-        @jupyterlab/server-proxy
         # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
         # will produce a collision (but warning) on vega-lite
         jupyterlab-chart-editor@4.14.3
@@ -43,19 +100,16 @@ beamsim_jupyter_base_jupyterlab() {
     fi
 }
 
-beamsim_jupyter_base_lab() {
+beamsim_jupyter_base_rs_widgets() {
     declare f
     declare p=$(pwd)
-    mkdir -p ~/src/radiasoft
     for f in jupyter_rs_vtk jupyter_rs_radia; do
-        cd ~/src/radiasoft
-        git clone https://github.com/radiasoft/"$f"
-        cd "$f"
+        codes_download radiasoft/"$f"
         pip install .
         cd js
         jupyter labextension install --no-build .
+        cd "$p"
     done
-    cd "$p"
 }
 
 beamsim_jupyter_base_rsbeams_style() {
@@ -64,12 +118,11 @@ beamsim_jupyter_base_rsbeams_style() {
     # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/27
     declare d=~/.config/matplotlib/stylelib
     mkdir -p "$d"
-    git clone https://github.com/radiasoft/rsbeams
-    for src in rsbeams/rsbeams/rsplot/stylelib/*; do
-        dst=$d/$(basename "$src")
-        cp "$src" "$dst"
+    codes_download radiasoft/rsbeams
+    for src in rsbeams/rsplot/stylelib/*; do
+        cp "$src" "$d/$(basename "$src")"
     done
-    rm -rf rsbeams
+    cd ..
 }
 
 beamsim_jupyter_base_vars() {
@@ -89,9 +142,12 @@ build_as_root() {
         vim-enhanced
         gnuplot-minimal
         ncl-devel
+
+        # Keep up to date with download/installers/beamsim-codes
         rscode-geant4
         rscode-julia
         rscode-madness
+
         # USPAS (temporary?) https://github.com/radiasoft/container-beamsim-jupyter-base/issues/117
         mc
     )
