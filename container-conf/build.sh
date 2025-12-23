@@ -70,6 +70,7 @@ beamsim_jupyter_base_jupyterlab() {
         # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/118
         'numba==0.63.1'
         'llvmlite==0.46.0'
+        'seaborn==0.13.2'
 
         # jupyterhub
         'jupyterhub==5.4.3'
@@ -87,14 +88,8 @@ beamsim_jupyter_base_jupyterlab() {
     )
     pip install "${x[@]}"
     julia -e 'using Pkg; Pkg.add("IJulia")'
-    declare l=(
-        # Note: https://github.com/jupyterlab/jupyterlab/issues/5420
-        # will produce a collision (but warning) on vega-lite
-        jupyterlab-chart-editor@4.14.3
-    )
-    jupyter labextension install --no-build "${l[@]}"
     # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
-    beamsim_jupyter_base_lab
+    beamsim_jupyter_base_rs_widgets
     # Need dev-build because jupyter lab build defaults to dev build
     # when there are declare extensions (jupyter-rs-*)
     # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter-base/issues/81 for reason behind NODE_OPTIONS
@@ -108,7 +103,8 @@ beamsim_jupyter_base_rs_widgets() {
     declare f
     declare p=$(pwd)
     for f in jupyter_rs_vtk jupyter_rs_radia; do
-        codes_download radiasoft/"$f"
+        install_git_clone "$f"
+        cd "$f"
         pip install .
         cd js
         jupyter labextension install --no-build .
@@ -122,11 +118,10 @@ beamsim_jupyter_base_rsbeams_style() {
     # https://github.com/radiasoft/container-beamsim-jupyter-base/issues/27
     declare d=~/.config/matplotlib/stylelib
     mkdir -p "$d"
-    codes_download radiasoft/rsbeams
-    for src in rsbeams/rsplot/stylelib/*; do
+    install_git_clone rsbeams
+    for src in rsbeams/rsbeams/rsplot/stylelib/*; do
         cp "$src" "$d/$(basename "$src")"
     done
-    cd ..
 }
 
 beamsim_jupyter_base_vars() {
@@ -147,10 +142,9 @@ build_as_root() {
         gnuplot-minimal
         ncl-devel
 
-        # Keep up to date with download/installers/beamsim-codes
+        # Not installed in beamsim. See download/installers/beamsim-codes
         rscode-geant4
         rscode-julia
-        rscode-madness
 
         # USPAS (temporary?) https://github.com/radiasoft/container-beamsim-jupyter-base/issues/117
         mc
