@@ -88,27 +88,31 @@ beamsim_jupyter_base_jupyterlab() {
     )
     pip install "${x[@]}"
     julia -e 'using Pkg; Pkg.add("IJulia")'
-    # https://jupyterlab.readthedocs.io/en/stable/user/jupyterhub.html#use-jupyterlab-by-default
     beamsim_jupyter_base_rs_widgets
-    # Need dev-build because jupyter lab build defaults to dev build
-    # when there are declare extensions (jupyter-rs-*)
-    # See https://git.radiasoft.org/radiasoft/container-beamsim-jupyter-base/issues/81 for reason behind NODE_OPTIONS
-    if ! NODE_OPTIONS="$n" jupyter lab build --dev-build=False; then
-        tail -100 /tmp/jupyterlab*.log || true
-        build_err 'juptyer lab failed to build'
-    fi
 }
 
 beamsim_jupyter_base_rs_widgets() {
     declare f
     declare p=$(pwd)
+#TODO(robnagler)
+    git clone https://github.com/radiasoft/jupyter_rs_vtk
+    cd jupyter_rs_vtk
+    git checkout 29-jupyterlab4
+    pip install  .
+    cd ..
+    git clone https://github.com/radiasoft/jupyter_rs_radia
+    cd jupyter_rs_radia
+    git checkout 78-jupyterlab4
+    pip install  .
+    cd ..
+    return
+
     for f in jupyter_rs_vtk jupyter_rs_radia; do
         install_git_clone "$f"
         cd "$f"
-        pip install .
-        cd js
-        jupyter labextension install --no-build .
-        cd "$p"
+        git checkout 78-jupyterlab4
+        pip install  .
+        cd ..
     done
 }
 
