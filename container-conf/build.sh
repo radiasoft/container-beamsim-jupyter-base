@@ -86,32 +86,17 @@ beamsim_jupyter_base_jupyterlab() {
         'h5grove==2.3.0'
         'orjson==3.11.5'
     )
-    pip install "${x[@]}"
+    install_pip_install "${x[@]}"
     julia -e 'using Pkg; Pkg.add("IJulia")'
     beamsim_jupyter_base_rs_widgets
 }
 
 beamsim_jupyter_base_rs_widgets() {
     declare f
-    declare p=$(pwd)
-#TODO(robnagler)
-    git clone https://github.com/radiasoft/jupyter_rs_vtk
-    cd jupyter_rs_vtk
-    git checkout 29-jupyterlab4
-    pip install  .
-    cd ..
-    git clone https://github.com/radiasoft/jupyter_rs_radia
-    cd jupyter_rs_radia
-    git checkout 78-jupyterlab4
-    pip install  .
-    cd ..
-    return
-
     for f in jupyter_rs_vtk jupyter_rs_radia; do
         install_git_clone "$f"
         cd "$f"
-        git checkout 78-jupyterlab4
-        pip install  .
+        install_pip_install .
         cd ..
     done
 }
