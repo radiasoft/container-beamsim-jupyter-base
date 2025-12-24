@@ -118,7 +118,7 @@ beamsim_jupyter_base_vars() {
     beamsim_jupyter_base_boot_dir=$build_run_user_home/.radia-run
     beamsim_jupyter_base_radia_run_boot=$beamsim_jupyter_base_boot_dir/start
     build_is_public=1
-    build_docker_cmd='["'"$beamsim_jupyter_base_radia_run_boot"'"]'
+    build_docker_cmd=$beamsim_jupyter_base_radia_run_boot
 }
 
 build_as_root() {
