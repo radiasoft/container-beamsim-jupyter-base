@@ -1,10 +1,13 @@
 #!/bin/bash
+# POSIT: keep in sync with rpm-code common
 
 beamsim_jupyter_base_jupyterlab() {
     # POSIT: versions same in container-jupyterhub/build.sh
     declare x=(
+
         # These lists were created by pip installing packages and seeing which versions were installed.
         # The "Successfully installed" line which pip outputs
+
 
         # pip install jupyterlab
         'jupyterlab==4.5.1'
@@ -124,7 +127,6 @@ beamsim_jupyter_base_vars() {
 build_as_root() {
     umask 022
     declare r=(
-        rscode-ipykernel
         # Needed to export notebooks https://github.com/radiasoft/devops/issues/188
         pandoc
         vim-enhanced
