@@ -100,7 +100,9 @@ beamsim_jupyter_base_rs_widgets() {
         install_git_clone "$f"
         cd "$f"
         install_pip_install .
-        cd ..
+        cd js
+        jupyter labextension install .
+        cd ../..
     done
 }
 
