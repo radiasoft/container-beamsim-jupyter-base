@@ -149,7 +149,13 @@ build_as_root() {
     declare e=release-$(build_fedora_version).noarch.rpm
     build_yum install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-"$e"
     build_yum install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-"$e"
-    build_yum install ffmpeg texlive-scheme-medium texlive-collection-latexextra
+    # Fedora's own ffmpeg-free (libswresample-free et al) may already be
+    # installed (e.g. pulled in by something in radiasoft/beamsim) and
+    # conflicts with rpmfusion's ffmpeg-libs build of the same files;
+    # --allowerasing lets dnf swap them for the rpmfusion versions (the
+    # standard rpmfusion multimedia migration technique)
+    build_yum install --allowerasing ffmpeg
+    build_yum install texlive-scheme-medium texlive-collection-latexextra
     # ffmpeg installed from rpmfusion so disable it for other packages
     install_yum_repo_set_enabled 'rpmfusion*' 0
 }
